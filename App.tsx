@@ -4,9 +4,10 @@ import IconIonicons from "@expo/vector-icons/Ionicons";
 import IconMaterialCommunity from "@expo/vector-icons/MaterialCommunityIcons";
 import { getHeaderTitle } from "@react-navigation/elements";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useState } from "react";
-import { StyleSheet } from "react-native";
+import {
+  NativeStackHeaderProps,
+  createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import {
   MD3DarkTheme as DarkTheme,
   MD3LightTheme as LitgthTheme,
@@ -14,31 +15,43 @@ import {
   Appbar,
 } from "react-native-paper";
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
+import { Provider } from "react-redux";
 
+import { useAppDispatch, useAppSelector } from "./src/redux/reduxHooks";
+import { toggleDarkMode } from "./src/redux/slices/darkMode";
+import { store } from "./src/redux/store";
 import { CategoriesScreen } from "./src/screens/categories";
 import { DreamDetailScreen } from "./src/screens/dreams/dreamDetails";
 import { DreamsScreen } from "./src/screens/dreams/dreams";
 
-export default function App() {
-  const Tab = createMaterialBottomTabNavigator();
-  const [darkMode, setDarkMode] = useState(false);
+export default function RootApp() {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+}
 
-  const theme = {
+export function App() {
+  const Tab = createMaterialBottomTabNavigator();
+  const isDarkMode = useAppSelector((state) => state.darkMode.value);
+
+  const ligthTheme = {
     ...LitgthTheme,
   };
 
-  function toggleDarkMode() {
-    setDarkMode(!darkMode);
-  }
+  const darkTheme = {
+    ...DarkTheme,
+  };
 
   return (
-    <PaperProvider theme={theme}>
+    <PaperProvider theme={isDarkMode ? darkTheme : ligthTheme}>
       <NavigationContainer>
         <Tab.Navigator>
           <Tab.Screen
             options={{
               tabBarLabel: "Dreams",
-              tabBarIcon: ({ color, size, focused }) =>
+              tabBarIcon: ({ color, focused }) =>
                 focused ? (
                   <IconIonicons name="cloudy-night-sharp" size={22} />
                 ) : (
@@ -51,7 +64,7 @@ export default function App() {
           <Tab.Screen
             options={{
               tabBarLabel: "Dreams Categories",
-              tabBarIcon: ({ color, size, focused }) =>
+              tabBarIcon: ({ color, focused }) =>
                 focused ? (
                   <IconEntypo name="folder" size={22} />
                 ) : (
@@ -72,7 +85,7 @@ function DreamsStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="DreamsStack"
+        name="Dreams"
         component={DreamsScreen}
         options={{
           header: (props) => <CustomNavigationBar {...props} />,
@@ -80,6 +93,7 @@ function DreamsStack() {
       />
       <Stack.Screen
         options={{
+          title: "Dream",
           header: (props) => <CustomNavigationBar {...props} />,
         }}
         name="DreamDetail"
@@ -89,13 +103,20 @@ function DreamsStack() {
   );
 }
 
-function CustomNavigationBar({ navigation, route, options, back }) {
-  const title = getHeaderTitle(options, route.name);
+function CustomNavigationBar(props: NativeStackHeaderProps) {
+  const title = getHeaderTitle(props.options, props.route.name);
+  const dispatch = useAppDispatch();
+
   return (
     <Appbar.Header elevated>
-      {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
+      {props.back ? (
+        <Appbar.BackAction onPress={props.navigation.goBack} />
+      ) : null}
       <Appbar.Content title={title} />
-      <Appbar.Action icon="theme-light-dark" onPress={() => {}} />
+      <Appbar.Action
+        icon="theme-light-dark"
+        onPress={() => dispatch(toggleDarkMode())}
+      />
     </Appbar.Header>
   );
 }
@@ -114,12 +135,3 @@ function CategoriesStack() {
     </Stack.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

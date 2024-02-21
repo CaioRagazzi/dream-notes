@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { List, Surface, Searchbar, TouchableRipple } from "react-native-paper";
+import {
+  List,
+  Surface,
+  Searchbar,
+  TouchableRipple,
+  FAB,
+} from "react-native-paper";
 
 export function DreamsScreen({ navigation }) {
   const [dreams, setDreams] = useState([
@@ -16,7 +22,7 @@ export function DreamsScreen({ navigation }) {
   }
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Searchbar
         style={{ margin: 12 }}
         placeholder="Search"
@@ -24,7 +30,7 @@ export function DreamsScreen({ navigation }) {
         value={searchQuery}
       />
       {dreams.map((dream) => (
-        <Surface id={dream.id.toString()} style={styles.surface} elevation={4}>
+        <Surface key={dream.id.toString()} style={styles.surface} elevation={4}>
           <TouchableRipple
             onPress={() => navigateToDreamDetail(dream)}
             rippleColor="rgba(0, 0, 0, .32)"
@@ -38,6 +44,13 @@ export function DreamsScreen({ navigation }) {
           </TouchableRipple>
         </Surface>
       ))}
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        onPress={() => console.log("FAB Pressed")}
+        mode="elevated"
+        variant="secondary"
+      />
     </View>
   );
 }
@@ -50,5 +63,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
+  },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
