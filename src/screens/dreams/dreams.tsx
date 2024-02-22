@@ -22,24 +22,24 @@ export function DreamsScreen({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.mainContainer}>
       <Searchbar
-        style={{ margin: 12 }}
+        style={styles.searchBar}
         placeholder="Search"
         onChangeText={setSearchQuery}
         value={searchQuery}
       />
       {dreams.map((dream) => (
-        <Surface key={dream.id.toString()} style={styles.surface} elevation={4}>
+        <Surface key={dream.id.toString()} style={styles.surface}>
           <TouchableRipple
             onPress={() => navigateToDreamDetail(dream)}
             rippleColor="rgba(0, 0, 0, .32)"
-            style={{ width: "100%", height: "100%" }}
+            style={styles.touchableRipple}
           >
             <List.Item
               title={dream.title}
               description={dream.description}
-              left={(props) => <List.Icon {...props} icon="folder" />}
+              left={(props) => <List.Icon {...props} icon="cloud" />}
             />
           </TouchableRipple>
         </Surface>
@@ -47,7 +47,7 @@ export function DreamsScreen({ navigation }) {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => console.log("FAB Pressed")}
+        onPress={() => navigation.navigate("SaveDream")}
         mode="elevated"
         variant="secondary"
       />
@@ -56,6 +56,16 @@ export function DreamsScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+  },
+  searchBar: {
+    margin: 12,
+  },
+  touchableRipple: {
+    width: "100%",
+    height: "100%",
+  },
   surface: {
     height: 80,
     borderRadius: 20,
