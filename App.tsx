@@ -1,3 +1,4 @@
+// import { RealmProvider } from "@realm/react";
 import {
   MD3DarkTheme as DarkTheme,
   MD3LightTheme as LitgthTheme,
@@ -5,6 +6,7 @@ import {
 } from "react-native-paper";
 import { Provider } from "react-redux";
 
+// import { Dream } from "./src/databases/schemas/dream";
 import RootNavigator from "./src/navigation/rootNavigator";
 import { useAppSelector } from "./src/redux/reduxHooks";
 import { store } from "./src/redux/store";
@@ -12,6 +14,8 @@ import { store } from "./src/redux/store";
 export default function RootApp() {
   return (
     <Provider store={store}>
+      {/* <RealmProvider schema={[Dream]}>
+      </RealmProvider> */}
       <App />
     </Provider>
   );

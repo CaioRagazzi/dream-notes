@@ -22,9 +22,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions":[
+      "permissions": [
         "android.permission.DETECT_SCREEN_CAPTURE"
-      ]
+      ],
+      "package": "com.ragazzitech.dreamnotes"
     },
     "web": {
       "favicon": "./assets/favicon.png"
