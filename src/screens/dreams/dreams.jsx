@@ -1,4 +1,3 @@
-// import { useQuery } from "@realm/react";
 import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import {
@@ -9,8 +8,6 @@ import {
   FAB,
 } from "react-native-paper";
 
-// import { Dream } from "../../databases/schemas/dream";
-
 export function DreamsScreen({ navigation }) {
   const [dreams, setDreams] = useState([
     { id: 1, title: "Sonho 1", description: "Dream description" },
@@ -18,7 +15,6 @@ export function DreamsScreen({ navigation }) {
     { id: 3, title: "Sonho 3", description: "Dream description" },
     { id: 4, title: "Sonho 4", description: "Dream description" },
   ]);
-  // const dreams = useQuery(Dream);
   const [searchQuery, setSearchQuery] = useState("");
 
   function navigateToDreamDetail(dream) {

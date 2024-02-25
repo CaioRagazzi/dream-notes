@@ -1,4 +1,4 @@
-// import { Picker } from "@react-native-picker/picker";
+import { Picker } from "@react-native-picker/picker";
 import { useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { TextInput, Button, Surface } from "react-native-paper";
@@ -33,7 +33,7 @@ export function SaveDreamScreen() {
         numberOfLines={8}
         onChangeText={(description) => setDescription(description)}
       />
-      {/* <Surface style={styles.surface}>
+      <Surface style={styles.surface}>
         <Picker
           mode="dropdown"
           ref={pickerRef}
@@ -45,7 +45,7 @@ export function SaveDreamScreen() {
           <Picker.Item label="--Select Category--" value="0" />
           <Picker.Item label="Family" value="1" />
         </Picker>
-      </Surface> */}
+      </Surface>
     </View>
   );
 }
