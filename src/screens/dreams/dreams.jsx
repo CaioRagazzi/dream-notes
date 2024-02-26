@@ -1,24 +1,30 @@
-import { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { useState, useEffect } from "react"
+import { View, StyleSheet } from "react-native"
 import {
   List,
   Surface,
   Searchbar,
   TouchableRipple,
   FAB,
-} from "react-native-paper";
+} from "react-native-paper"
+
+import DreamService from "../../databases/services/dream.service"
 
 export function DreamsScreen({ navigation }) {
-  const [dreams, setDreams] = useState([
-    { id: 1, title: "Sonho 1", description: "Dream description" },
-    { id: 2, title: "Sonho 2", description: "Dream description" },
-    { id: 3, title: "Sonho 3", description: "Dream description" },
-    { id: 4, title: "Sonho 4", description: "Dream description" },
-  ]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [dreams, setDreams] = useState([])
+  const [searchQuery, setSearchQuery] = useState("")
+
+  useEffect(() => {
+    async function getDreams() {
+      const dreamService = new DreamService()
+      const dreams = await dreamService.findAll()
+      setDreams(dreams)
+    }
+    getDreams()
+  }, [])
 
   function navigateToDreamDetail(dream) {
-    navigation.navigate("DreamDetail");
+    navigation.navigate("DreamDetail")
   }
 
   return (
@@ -52,7 +58,7 @@ export function DreamsScreen({ navigation }) {
         variant="secondary"
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -80,4 +86,4 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-});
+})

@@ -1,17 +1,23 @@
-import { Picker } from "@react-native-picker/picker";
-import { useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { TextInput, Button, Surface } from "react-native-paper";
+import { Picker } from "@react-native-picker/picker"
+import { useRef, useState } from "react"
+import { StyleSheet, View } from "react-native"
+import { TextInput, Button, Surface } from "react-native-paper"
+
+import { Dream } from "../../databases/models/dream"
+import DreamService from "../../databases/services/dream.service"
 
 export function SaveDreamScreen() {
-  const [text, setText] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [text, setText] = useState("")
+  const [description, setDescription] = useState("")
+  const [selectedLanguage, setSelectedLanguage] = useState()
 
-  const pickerRef = useRef(null);
+  const pickerRef = useRef(null)
 
-  function openCategoriePicker() {
-    pickerRef.current.focus();
+  async function handleSaveDream() {
+    const service = new DreamService()
+    const dream = new Dream(text, description)
+    const response = await service.addData(dream)
+    console.log(response)
   }
 
   return (
@@ -46,8 +52,11 @@ export function SaveDreamScreen() {
           <Picker.Item label="Family" value="1" />
         </Picker>
       </Surface>
+      <Button mode="outlined" onPress={handleSaveDream}>
+        oi
+      </Button>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -73,4 +82,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     margin: 12,
   },
-});
+})
