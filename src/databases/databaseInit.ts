@@ -15,10 +15,16 @@ export default class DatabaseInit {
     const sql = [
       `DROP TABLE IF EXISTS dreams;`,
       `DROP TABLE IF EXISTS categories;`,
+      `create table if not exists categories (
+        id integer primary key autoincrement,
+        name text
+        );`,
       `create table if not exists dreams (
         id integer primary key autoincrement,
         title text,
-        description text
+        description text,
+        category_id integer,
+        FOREIGN KEY(category_id) REFERENCES categories(id)
         );`,
       `insert into dreams(title, description) values('Dream Title', 'Dream description');`,
     ]

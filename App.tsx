@@ -15,13 +15,11 @@ import { store } from "./src/redux/store"
 
 export default function RootApp() {
   useEffect(() => {
-    // const dbInit = new DatabaseInit();
+    // const dbInit = new DatabaseInit()
   }, [])
 
   return (
     <Provider store={store}>
-      {/* <RealmProvider schema={[Dream]}>
-      </RealmProvider> */}
       <App />
     </Provider>
   )

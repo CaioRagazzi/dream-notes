@@ -1,6 +1,7 @@
 export class Category {
-  constructor(
-    private id?: number,
-    private name?: string,
-  ) {}
+  id: number
+  name: string
+  constructor(name: string) {
+    this.name = name
+  }
 }

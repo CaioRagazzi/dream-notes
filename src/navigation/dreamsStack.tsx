@@ -1,13 +1,12 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import React from "react"
 
-import CustomNavigationBar from "./customNavigationBar";
-import { DreamDetailScreen } from "../screens/dreams/dreamDetails";
-import { DreamsScreen } from "../screens/dreams/dreams";
-import { SaveDreamScreen } from "../screens/dreams/saveDream";
+import CustomNavigationBar from "./customNavigationBar"
+import { DreamsScreen } from "../screens/dreams/dreams"
+import { SaveDreamScreen } from "../screens/dreams/saveDream"
 
 export default function DreamsStack() {
-  const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator()
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -19,14 +18,6 @@ export default function DreamsStack() {
       />
       <Stack.Screen
         options={{
-          title: "Dream",
-          header: (props) => <CustomNavigationBar {...props} />,
-        }}
-        name="DreamDetail"
-        component={DreamDetailScreen}
-      />
-      <Stack.Screen
-        options={{
           title: "Save Dream",
           header: (props) => <CustomNavigationBar {...props} />,
         }}
@@ -34,5 +25,5 @@ export default function DreamsStack() {
         component={SaveDreamScreen}
       />
     </Stack.Navigator>
-  );
+  )
 }

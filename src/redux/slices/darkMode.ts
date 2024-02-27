@@ -1,12 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit"
 
 interface DarkModeState {
-  value: boolean;
+  value: boolean
 }
 
 const initialState: DarkModeState = {
   value: false,
-};
+}
 
 export const darkModeSlice = createSlice({
   name: "darkMode",
@@ -17,12 +17,12 @@ export const darkModeSlice = createSlice({
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
-      state.value = !state.value;
+      state.value = !state.value
     },
   },
-});
+})
 
 // Action creators are generated for each case reducer function
-export const { toggleDarkMode } = darkModeSlice.actions;
+export const { toggleDarkMode } = darkModeSlice.actions
 
-export default darkModeSlice.reducer;
+export default darkModeSlice.reducer

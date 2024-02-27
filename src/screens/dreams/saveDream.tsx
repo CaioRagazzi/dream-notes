@@ -1,23 +1,41 @@
 import { Picker } from "@react-native-picker/picker"
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { StyleSheet, View } from "react-native"
 import { TextInput, Button, Surface } from "react-native-paper"
 
 import { Dream } from "../../databases/models/dream"
 import DreamService from "../../databases/services/dream.service"
+import { useDispatch } from "react-redux"
+import { updateDream } from "../../redux/slices/dreams"
 
-export function SaveDreamScreen() {
-  const [text, setText] = useState("")
-  const [description, setDescription] = useState("")
+export function SaveDreamScreen({ route, navigation }) {
+  const [dream, setDream] = useState<Dream>(null)
   const [selectedLanguage, setSelectedLanguage] = useState()
+  const [isEditing, setIsEditing] = useState(false)
+  const dispatch = useDispatch()
 
   const pickerRef = useRef(null)
 
+  useEffect(() => {
+    if (route.params) {
+      setIsEditing(true)
+      setDream(route.params)
+    } else {
+      navigation.setOptions({
+        title: "Add Dream",
+      })
+    }
+  }, [])
+
   async function handleSaveDream() {
     const service = new DreamService()
-    const dream = new Dream(text, description)
-    const response = await service.addData(dream)
-    console.log(response)
+    if (isEditing) {
+      service.updateById(dream)
+      dispatch(updateDream(dream))
+    } else {
+      await service.addData(dream)
+    }
+    navigation.goBack()
   }
 
   return (
@@ -26,18 +44,20 @@ export function SaveDreamScreen() {
         style={styles.textInput}
         mode="outlined"
         label="Title"
-        value={text}
-        onChangeText={(text) => setText(text)}
+        value={dream?.title}
+        onChangeText={(title) => setDream((dream) => ({ ...dream, title }))}
       />
 
       <TextInput
         label="Description"
-        value={description}
+        value={dream?.description}
         mode="outlined"
         style={styles.textInput}
         multiline
         numberOfLines={8}
-        onChangeText={(description) => setDescription(description)}
+        onChangeText={(description) =>
+          setDream((dream) => ({ ...dream, description }))
+        }
       />
       <Surface style={styles.surface}>
         <Picker
@@ -53,7 +73,7 @@ export function SaveDreamScreen() {
         </Picker>
       </Surface>
       <Button mode="outlined" onPress={handleSaveDream}>
-        oi
+        {isEditing ? "Save" : "Add"}
       </Button>
     </View>
   )

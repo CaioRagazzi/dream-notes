@@ -8,23 +8,24 @@ import {
   FAB,
 } from "react-native-paper"
 
-import DreamService from "../../databases/services/dream.service"
+import { Category } from "../../databases/models/category"
+import CategoryService from "../../databases/services/categories.service"
 
-export function DreamsScreen({ navigation }) {
-  const [dreams, setDreams] = useState([])
+export function CategoriesScreen({ navigation }) {
+  const [categories, setCategories] = useState<Category[]>([])
   const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
-    async function getDreams() {
-      const dreamService = new DreamService()
-      const dreams = await dreamService.findAll()
-      setDreams(dreams)
+    async function getCategories() {
+      const categoryService = new CategoryService()
+      const categories = await categoryService.findAll()
+      setCategories(categories)
     }
-    getDreams()
+    getCategories()
   }, [])
 
-  function navigateToDreamDetail(dream) {
-    navigation.navigate("DreamDetail")
+  function navigateToCategoryDetail(category) {
+    navigation.navigate("SaveCategoryScreen")
   }
 
   return (
@@ -35,16 +36,15 @@ export function DreamsScreen({ navigation }) {
         onChangeText={setSearchQuery}
         value={searchQuery}
       />
-      {dreams.map((dream) => (
-        <Surface key={dream.id.toString()} style={styles.surface}>
+      {categories.map((category) => (
+        <Surface key={category.id.toString()} style={styles.surface}>
           <TouchableRipple
-            onPress={() => navigateToDreamDetail(dream)}
+            onPress={() => navigateToCategoryDetail(category)}
             rippleColor="rgba(0, 0, 0, .32)"
             style={styles.touchableRipple}
           >
             <List.Item
-              title={dream.title}
-              description={dream.description}
+              title={category.name}
               left={(props) => <List.Icon {...props} icon="cloud" />}
             />
           </TouchableRipple>
@@ -53,7 +53,7 @@ export function DreamsScreen({ navigation }) {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => navigation.navigate("SaveDream")}
+        onPress={() => navigation.navigate("SaveCategoryScreen")}
         mode="elevated"
         variant="secondary"
       />
