@@ -1,16 +1,28 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { StyleSheet, View } from "react-native"
 import { TextInput, Button } from "react-native-paper"
 
 import { Category } from "../../databases/models/category"
 import CategoryService from "../../databases/services/categories.service"
 
-export function SaveCategoryScreen() {
-  const [name, setName] = useState("")
+export function SaveCategoryScreen({ route, navigation }) {
+  const [category, setCategory] = useState<Category>(null)
+  const [isEditing, setIsEditing] = useState(false)
+
+  useEffect(() => {
+    if (route.params) {
+      setIsEditing(true)
+      setCategory(route.params)
+    } else {
+      navigation.setOptions({
+        title: "Add Category",
+      })
+    }
+  }, [])
 
   async function handleSaveCategory() {
     const service = new CategoryService()
-    const category = new Category(name)
+    const category = new Category(Category.name)
     await service.addData(category)
   }
 
@@ -20,11 +32,13 @@ export function SaveCategoryScreen() {
         style={styles.textInput}
         mode="outlined"
         label="Category Name"
-        value={name}
-        onChangeText={(text) => setName(text)}
+        value={category?.name}
+        onChangeText={(name) =>
+          setCategory((category) => ({ ...category, name }))
+        }
       />
       <Button mode="outlined" onPress={handleSaveCategory}>
-        Add
+        {isEditing ? "Save" : "Add"}
       </Button>
     </View>
   )

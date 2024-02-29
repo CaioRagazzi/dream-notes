@@ -2,10 +2,10 @@ import { Picker } from "@react-native-picker/picker"
 import { useRef, useState, useEffect } from "react"
 import { StyleSheet, View } from "react-native"
 import { TextInput, Button, Surface } from "react-native-paper"
+import { useDispatch } from "react-redux"
 
 import { Dream } from "../../databases/models/dream"
 import DreamService from "../../databases/services/dream.service"
-import { useDispatch } from "react-redux"
 import { updateDream } from "../../redux/slices/dreams"
 
 export function SaveDreamScreen({ route, navigation }) {

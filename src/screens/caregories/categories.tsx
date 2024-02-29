@@ -8,24 +8,20 @@ import {
   FAB,
 } from "react-native-paper"
 
-import { Category } from "../../databases/models/category"
-import CategoryService from "../../databases/services/categories.service"
+import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
+import { addInitialCategories } from "../../redux/slices/categories"
 
 export function CategoriesScreen({ navigation }) {
-  const [categories, setCategories] = useState<Category[]>([])
   const [searchQuery, setSearchQuery] = useState("")
+  const categories = useAppSelector((state) => state.categories.value)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    async function getCategories() {
-      const categoryService = new CategoryService()
-      const categories = await categoryService.findAll()
-      setCategories(categories)
-    }
-    getCategories()
+    dispatch(addInitialCategories())
   }, [])
 
   function navigateToCategoryDetail(category) {
-    navigation.navigate("SaveCategoryScreen")
+    navigation.navigate("SaveCategoryScreen", category)
   }
 
   return (
