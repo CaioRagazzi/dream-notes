@@ -12,6 +12,16 @@ export const addInitialCategories = createAsyncThunk(
   },
 )
 
+export const addCategory = createAsyncThunk(
+  "categories/add",
+  async (category: Category) => {
+    const categoryService = new CategoryService()
+    const categoryId = await categoryService.addData(category)
+    category.id = categoryId
+    return category
+  },
+)
+
 interface CategoriesState {
   value: Category[]
 }
@@ -20,11 +30,11 @@ const initialState: CategoriesState = {
   value: [],
 }
 
-export const dreamsSlice = createSlice({
+export const categoriesSlice = createSlice({
   name: "categories",
   initialState,
   reducers: {
-    updateDream: (state, action: PayloadAction<Category>) => {
+    updateCategory: (state, action: PayloadAction<Category>) => {
       state.value.map((category) => {
         if (category.id === action.payload.id) {
           category.name = action.payload.name
@@ -33,12 +43,16 @@ export const dreamsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(addInitialCategories.fulfilled, (state, action) => {
-      state.value = action.payload
-    })
+    builder
+      .addCase(addInitialCategories.fulfilled, (state, action) => {
+        state.value = action.payload
+      })
+      .addCase(addCategory.fulfilled, (state, action) => {
+        state.value.push(action.payload)
+      })
   },
 })
 
-export const { updateDream } = dreamsSlice.actions
+export const { updateCategory } = categoriesSlice.actions
 
-export default dreamsSlice.reducer
+export default categoriesSlice.reducer

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { View, StyleSheet } from "react-native"
+import { View, StyleSheet, ScrollView } from "react-native"
 import {
   List,
   Surface,
@@ -32,20 +32,22 @@ export function CategoriesScreen({ navigation }) {
         onChangeText={setSearchQuery}
         value={searchQuery}
       />
-      {categories.map((category) => (
-        <Surface key={category.id.toString()} style={styles.surface}>
-          <TouchableRipple
-            onPress={() => navigateToCategoryDetail(category)}
-            rippleColor="rgba(0, 0, 0, .32)"
-            style={styles.touchableRipple}
-          >
-            <List.Item
-              title={category.name}
-              left={(props) => <List.Icon {...props} icon="cloud" />}
-            />
-          </TouchableRipple>
-        </Surface>
-      ))}
+      <ScrollView>
+        {categories.map((category) => (
+          <Surface key={category.id.toString()} style={styles.surface}>
+            <TouchableRipple
+              onPress={() => navigateToCategoryDetail(category)}
+              rippleColor="rgba(0, 0, 0, .32)"
+              style={styles.touchableRipple}
+            >
+              <List.Item
+                title={category.name}
+                left={(props) => <List.Icon {...props} icon="cloud" />}
+              />
+            </TouchableRipple>
+          </Surface>
+        ))}
+      </ScrollView>
       <FAB
         icon="plus"
         style={styles.fab}

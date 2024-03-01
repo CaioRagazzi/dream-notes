@@ -32,6 +32,9 @@ export const dreamsSlice = createSlice({
         }
       })
     },
+    addDream: (state, action: PayloadAction<Dream>) => {
+      state.value.push(action.payload)
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(addInitialDreams.fulfilled, (state, action) => {
@@ -41,6 +44,6 @@ export const dreamsSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { updateDream } = dreamsSlice.actions
+export const { updateDream, addDream } = dreamsSlice.actions
 
 export default dreamsSlice.reducer
