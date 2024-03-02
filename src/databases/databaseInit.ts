@@ -10,6 +10,7 @@ export default class DatabaseInit {
       console.log("Foreign keys turned on"),
     )
     this.InitDb()
+    // db.closeSync()
   }
   private InitDb() {
     const sql = [
@@ -26,7 +27,6 @@ export default class DatabaseInit {
         category_id integer,
         FOREIGN KEY(category_id) REFERENCES categories(id)
         );`,
-      `insert into dreams(title, description) values('Dream Title', 'Dream description');`,
     ]
 
     db.transaction(

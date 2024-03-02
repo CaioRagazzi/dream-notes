@@ -2,23 +2,36 @@ import { Picker } from "@react-native-picker/picker"
 import { useRef, useState, useEffect } from "react"
 import { StyleSheet, View } from "react-native"
 import { TextInput, Button, Surface } from "react-native-paper"
-import { useDispatch } from "react-redux"
 
 import { Dream } from "../../databases/models/dream"
-import DreamService from "../../databases/services/dream.service"
-import { updateDream } from "../../redux/slices/dreams"
+import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
+import { addInitialCategories } from "../../redux/slices/categories"
+import { addDream, updateDream } from "../../redux/slices/dreams"
 
 export function SaveDreamScreen({ route, navigation }) {
   const [dream, setDream] = useState<Dream>(null)
-  const [selectedLanguage, setSelectedLanguage] = useState()
+  const [selectedCategory, setSelectedCategory] = useState<number>()
   const [isEditing, setIsEditing] = useState(false)
-  const dispatch = useDispatch()
+  const appDispatch = useAppDispatch()
+  const categories = useAppSelector((state) => state.categories.value)
+  const dispatch = useAppDispatch()
 
   const pickerRef = useRef(null)
 
   useEffect(() => {
+    if (categories) {
+      console.log(dream)
+
+      setSelectedCategory(dream?.categoryId ?? 0)
+    }
+    console.log(categories)
+  }, [categories])
+
+  useEffect(() => {
+    dispatch(addInitialCategories())
     if (route.params) {
       setIsEditing(true)
+      setSelectedCategory(route.params.categoryId ?? 0)
       setDream(route.params)
     } else {
       navigation.setOptions({
@@ -28,14 +41,22 @@ export function SaveDreamScreen({ route, navigation }) {
   }, [])
 
   async function handleSaveDream() {
-    const service = new DreamService()
+    console.log(dream)
+
     if (isEditing) {
-      service.updateById(dream)
-      dispatch(updateDream(dream))
+      appDispatch(updateDream(dream))
     } else {
-      await service.addData(dream)
+      appDispatch(addDream(dream))
     }
     navigation.goBack()
+  }
+
+  function handleCategoryChange(categoryId: number) {
+    if (categoryId === 0) {
+      setDream((dream) => ({ ...dream, categoryId: null }))
+    }
+    setSelectedCategory(categoryId)
+    setDream((dream) => ({ ...dream, categoryId }))
   }
 
   return (
@@ -63,13 +84,19 @@ export function SaveDreamScreen({ route, navigation }) {
         <Picker
           mode="dropdown"
           ref={pickerRef}
-          selectedValue={selectedLanguage}
-          onValueChange={(itemValue, itemIndex) =>
-            setSelectedLanguage(itemValue)
-          }
+          selectedValue={selectedCategory}
+          onValueChange={(itemValue) => handleCategoryChange(itemValue)}
         >
           <Picker.Item label="--Select Category--" value="0" />
-          <Picker.Item label="Family" value="1" />
+          {categories.map((category) => {
+            return (
+              <Picker.Item
+                label={category.name}
+                value={category.id}
+                key={category.id}
+              />
+            )
+          })}
         </Picker>
       </Surface>
       <Button mode="outlined" onPress={handleSaveDream}>

@@ -1,21 +1,14 @@
 import { useEffect, useState } from "react"
 import { StyleSheet, View } from "react-native"
 import { TextInput, Button } from "react-native-paper"
-import { useDispatch } from "react-redux"
 
 import { Category } from "../../databases/models/category"
-import CategoryService from "../../databases/services/categories.service"
 import { useAppDispatch } from "../../redux/reduxHooks"
-import {
-  addCategory,
-  addInitialCategories,
-  updateCategory,
-} from "../../redux/slices/categories"
+import { addCategory, updateCategory } from "../../redux/slices/categories"
 
 export function SaveCategoryScreen({ route, navigation }) {
   const [category, setCategory] = useState<Category>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const dispatch = useDispatch()
   const appDispatch = useAppDispatch()
 
   useEffect(() => {
@@ -30,10 +23,8 @@ export function SaveCategoryScreen({ route, navigation }) {
   }, [])
 
   async function handleSaveCategory() {
-    const service = new CategoryService()
     if (isEditing) {
-      service.updateById(category)
-      dispatch(updateCategory(category))
+      appDispatch(updateCategory(category))
     } else {
       appDispatch(addCategory(category))
     }

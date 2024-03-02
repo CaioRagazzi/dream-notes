@@ -22,6 +22,19 @@ export const addCategory = createAsyncThunk(
   },
 )
 
+export const updateCategory = createAsyncThunk(
+  "categories/update",
+  async (category: Category) => {
+    const categoryService = new CategoryService()
+    const updated = await categoryService.updateById(category)
+    if (updated) {
+      return category
+    } else {
+      return null
+    }
+  },
+)
+
 interface CategoriesState {
   value: Category[]
 }
@@ -33,15 +46,7 @@ const initialState: CategoriesState = {
 export const categoriesSlice = createSlice({
   name: "categories",
   initialState,
-  reducers: {
-    updateCategory: (state, action: PayloadAction<Category>) => {
-      state.value.map((category) => {
-        if (category.id === action.payload.id) {
-          category.name = action.payload.name
-        }
-      })
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(addInitialCategories.fulfilled, (state, action) => {
@@ -50,9 +55,18 @@ export const categoriesSlice = createSlice({
       .addCase(addCategory.fulfilled, (state, action) => {
         state.value.push(action.payload)
       })
+      .addCase(updateCategory.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.value.map((category) => {
+            if (category.id === action.payload.id) {
+              category.name = action.payload.name
+            }
+          })
+        }
+      })
   },
 })
 
-export const { updateCategory } = categoriesSlice.actions
+export const {} = categoriesSlice.actions
 
 export default categoriesSlice.reducer

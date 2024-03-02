@@ -8,7 +8,32 @@ export const addInitialDreams = createAsyncThunk(
   async () => {
     const dreamService = new DreamService()
     const dreams = await dreamService.findAll()
+
     return dreams
+  },
+)
+
+export const addDream = createAsyncThunk("dreams/add", async (dream: Dream) => {
+  const dreamService = new DreamService()
+  try {
+    const dreamId = await dreamService.addData(dream)
+    dream.id = dreamId
+  } catch (error) {
+    console.log(error)
+  }
+  return dream
+})
+
+export const updateDream = createAsyncThunk(
+  "dreams/update",
+  async (dream: Dream) => {
+    const dreamService = new DreamService()
+    const updated = await dreamService.updateById(dream)
+    if (updated) {
+      return dream
+    } else {
+      return null
+    }
   },
 )
 
@@ -23,27 +48,29 @@ const initialState: DreamsState = {
 export const dreamsSlice = createSlice({
   name: "dreams",
   initialState,
-  reducers: {
-    updateDream: (state, action: PayloadAction<Dream>) => {
-      state.value.map((dream) => {
-        if (dream.id === action.payload.id) {
-          dream.title = action.payload.title
-          dream.description = action.payload.description
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(addInitialDreams.fulfilled, (state, action) => {
+        state.value = action.payload
+      })
+      .addCase(addDream.fulfilled, (state, action) => {
+        state.value.push(action.payload)
+      })
+      .addCase(updateDream.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.value.map((dream) => {
+            if (dream.id === action.payload.id) {
+              dream.description = action.payload.description
+              dream.title = action.payload.title
+            }
+          })
         }
       })
-    },
-    addDream: (state, action: PayloadAction<Dream>) => {
-      state.value.push(action.payload)
-    },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(addInitialDreams.fulfilled, (state, action) => {
-      state.value = action.payload
-    })
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { updateDream, addDream } = dreamsSlice.actions
+export const {} = dreamsSlice.actions
 
 export default dreamsSlice.reducer

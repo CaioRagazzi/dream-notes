@@ -10,9 +10,9 @@ export default class DreamService {
       db.transaction(
         (tx) =>
           tx.executeSql(
-            `insert into ${table} (title, description) 
-              values (?, ?)`,
-            [param.title, param.description],
+            `insert into ${table} (title, description, category_id) 
+              values (?, ?, ?)`,
+            [param.title, param.description, param.categoryId],
             (_, { insertId, rows }) => {
               resolve(insertId)
             },
@@ -47,8 +47,8 @@ export default class DreamService {
       db.transaction(
         (tx) =>
           tx.executeSql(
-            `update ${table} set title = ?, description = ? where id = ?;`,
-            [param.title, param.description, param.id],
+            `update ${table} set title = ?, description = ?, category_id = ? where id = ?;`,
+            [param.title, param.description, param.id, param.categoryId],
             () => {
               resolve(true)
             },
@@ -85,6 +85,10 @@ export default class DreamService {
           `select * from ${table}`,
           [],
           (_, result) => {
+            result.rows._array.map((dream) => {
+              dream.categoryId = dream.category_id
+            })
+
             resolve(result.rows._array)
           },
           (_, error): boolean => {
