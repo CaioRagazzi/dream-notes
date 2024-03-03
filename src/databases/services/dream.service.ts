@@ -48,7 +48,7 @@ export default class DreamService {
         (tx) =>
           tx.executeSql(
             `update ${table} set title = ?, description = ?, category_id = ? where id = ?;`,
-            [param.title, param.description, param.id, param.categoryId],
+            [param.title, param.description, param.categoryId, param.id],
             () => {
               resolve(true)
             },

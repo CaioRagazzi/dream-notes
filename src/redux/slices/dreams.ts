@@ -19,7 +19,7 @@ export const addDream = createAsyncThunk("dreams/add", async (dream: Dream) => {
     const dreamId = await dreamService.addData(dream)
     dream.id = dreamId
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
   return dream
 })
@@ -63,6 +63,7 @@ export const dreamsSlice = createSlice({
             if (dream.id === action.payload.id) {
               dream.description = action.payload.description
               dream.title = action.payload.title
+              dream.categoryId = action.payload.categoryId
             }
           })
         }

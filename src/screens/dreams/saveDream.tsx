@@ -20,12 +20,9 @@ export function SaveDreamScreen({ route, navigation }) {
 
   useEffect(() => {
     if (categories) {
-      console.log(dream)
-
       setSelectedCategory(dream?.categoryId ?? 0)
     }
-    console.log(categories)
-  }, [categories])
+  }, [categories, dream])
 
   useEffect(() => {
     dispatch(addInitialCategories())
@@ -41,8 +38,6 @@ export function SaveDreamScreen({ route, navigation }) {
   }, [])
 
   async function handleSaveDream() {
-    console.log(dream)
-
     if (isEditing) {
       appDispatch(updateDream(dream))
     } else {
@@ -52,11 +47,12 @@ export function SaveDreamScreen({ route, navigation }) {
   }
 
   function handleCategoryChange(categoryId: number) {
-    if (categoryId === 0) {
-      setDream((dream) => ({ ...dream, categoryId: null }))
-    }
+    setDream((dream) => ({
+      ...dream,
+      categoryId: categoryId === 0 ? null : categoryId,
+    }))
+
     setSelectedCategory(categoryId)
-    setDream((dream) => ({ ...dream, categoryId }))
   }
 
   return (
@@ -87,7 +83,7 @@ export function SaveDreamScreen({ route, navigation }) {
           selectedValue={selectedCategory}
           onValueChange={(itemValue) => handleCategoryChange(itemValue)}
         >
-          <Picker.Item label="--Select Category--" value="0" />
+          <Picker.Item label="--Select Category--" value={0} />
           {categories.map((category) => {
             return (
               <Picker.Item
