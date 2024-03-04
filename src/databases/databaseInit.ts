@@ -14,8 +14,8 @@ export default class DatabaseInit {
   }
   private InitDb() {
     const sql = [
-      `DROP TABLE IF EXISTS dreams;`,
-      `DROP TABLE IF EXISTS categories;`,
+      // `DROP TABLE IF EXISTS dreams;`,
+      // `DROP TABLE IF EXISTS categories;`,
       `create table if not exists categories (
         id integer primary key autoincrement,
         name text

@@ -33,19 +33,21 @@ export function DreamsScreen({ navigation }) {
         value={searchQuery}
       />
       {dreams.map((dream) => (
-        <Surface key={dream.id.toString()} style={styles.surface}>
-          <TouchableRipple
-            onPress={() => navigateToDreamDetail(dream)}
-            rippleColor="rgba(0, 0, 0, .32)"
-            style={styles.touchableRipple}
-          >
-            <List.Item
-              title={dream.title}
-              description={dream.description}
-              left={(props) => <List.Icon {...props} icon="cloud" />}
-            />
-          </TouchableRipple>
-        </Surface>
+        <View key={dream.id.toString()} style={styles.surfaceContainer}>
+          <Surface style={styles.surface}>
+            <TouchableRipple
+              onPress={() => navigateToDreamDetail(dream)}
+              rippleColor="rgba(0, 0, 0, .32)"
+              style={styles.touchableRipple}
+            >
+              <List.Item
+                title={dream.title}
+                description={dream.description}
+                left={(props) => <List.Icon {...props} icon="cloud" />}
+              />
+            </TouchableRipple>
+          </Surface>
+        </View>
       ))}
       <FAB
         icon="plus"
@@ -69,11 +71,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  surfaceContainer: {
+    overflow: "hidden",
+  },
   surface: {
     height: 80,
     borderRadius: 20,
     margin: 12,
-    overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
   },

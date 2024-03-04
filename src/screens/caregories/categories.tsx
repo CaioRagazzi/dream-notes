@@ -34,18 +34,20 @@ export function CategoriesScreen({ navigation }) {
       />
       <ScrollView>
         {categories.map((category) => (
-          <Surface key={category.id.toString()} style={styles.surface}>
-            <TouchableRipple
-              onPress={() => navigateToCategoryDetail(category)}
-              rippleColor="rgba(0, 0, 0, .32)"
-              style={styles.touchableRipple}
-            >
-              <List.Item
-                title={category.name}
-                left={(props) => <List.Icon {...props} icon="cloud" />}
-              />
-            </TouchableRipple>
-          </Surface>
+          <View key={category.id.toString()} style={styles.surfaceContainer}>
+            <Surface style={styles.surface}>
+              <TouchableRipple
+                onPress={() => navigateToCategoryDetail(category)}
+                rippleColor="rgba(0, 0, 0, .32)"
+                style={styles.touchableRipple}
+              >
+                <List.Item
+                  title={category.name}
+                  left={(props) => <List.Icon {...props} icon="cloud" />}
+                />
+              </TouchableRipple>
+            </Surface>
+          </View>
         ))}
       </ScrollView>
       <FAB
@@ -70,11 +72,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  surfaceContainer: {
+    overflow: "hidden",
+  },
   surface: {
     height: 80,
     borderRadius: 20,
     margin: 12,
-    overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
   },
