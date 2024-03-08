@@ -100,4 +100,23 @@ export default class DreamService {
       ),
     )
   }
+
+  findByName(dreamName: string) {
+    return new Promise<Dream[]>((resolve, reject) =>
+      db.transaction((tx) =>
+        tx.executeSql(
+          `select * from ${table} where title like '%${dreamName}%'`,
+          [],
+          (_, result) => {
+            resolve(result.rows._array)
+          },
+          (_, error): boolean => {
+            console.warn(error)
+            reject(error)
+            return false
+          },
+        ),
+      ),
+    )
+  }
 }

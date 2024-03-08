@@ -1,4 +1,4 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
 import { Category } from "../../databases/models/category"
 import CategoryService from "../../databases/services/categories.service"
@@ -35,6 +35,15 @@ export const updateCategory = createAsyncThunk(
   },
 )
 
+export const filterCategories = createAsyncThunk(
+  "categories/filter",
+  async (categoryName: string) => {
+    const categoryService = new CategoryService()
+    const categories = await categoryService.findByName(categoryName)
+    return categories
+  },
+)
+
 interface CategoriesState {
   value: Category[]
 }
@@ -63,6 +72,9 @@ export const categoriesSlice = createSlice({
             }
           })
         }
+      })
+      .addCase(filterCategories.fulfilled, (state, action) => {
+        state.value = action.payload
       })
   },
 })

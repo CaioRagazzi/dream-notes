@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { View, StyleSheet } from "react-native"
+import { View, StyleSheet, FlatList } from "react-native"
 import {
   List,
   Surface,
@@ -8,8 +8,9 @@ import {
   FAB,
 } from "react-native-paper"
 
+import { Dream } from "../../databases/models/dream"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
-import { addInitialDreams } from "../../redux/slices/dreams"
+import { addInitialDreams, filterDreams } from "../../redux/slices/dreams"
 
 export function DreamsScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("")
@@ -24,31 +25,48 @@ export function DreamsScreen({ navigation }) {
     navigation.navigate("SaveDream", dream)
   }
 
+  function filterDreamsByName(dreamName: string) {
+    setSearchQuery(dreamName)
+    if (!dreamName) {
+      dispatch(addInitialDreams())
+      return
+    }
+    dispatch(filterDreams(dreamName))
+  }
+
+  function getDreamListItem(dream: Dream) {
+    return (
+      <View key={dream.id.toString()} style={styles.surfaceContainer}>
+        <Surface style={styles.surface}>
+          <TouchableRipple
+            onPress={() => navigateToDreamDetail(dream)}
+            rippleColor="rgba(0, 0, 0, .32)"
+            style={styles.touchableRipple}
+          >
+            <List.Item
+              title={dream.title}
+              description={dream.description}
+              left={(props) => <List.Icon {...props} icon="cloud" />}
+            />
+          </TouchableRipple>
+        </Surface>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.mainContainer}>
       <Searchbar
         style={styles.searchBar}
         placeholder="Search"
-        onChangeText={setSearchQuery}
+        onChangeText={filterDreamsByName}
         value={searchQuery}
       />
-      {dreams.map((dream) => (
-        <View key={dream.id.toString()} style={styles.surfaceContainer}>
-          <Surface style={styles.surface}>
-            <TouchableRipple
-              onPress={() => navigateToDreamDetail(dream)}
-              rippleColor="rgba(0, 0, 0, .32)"
-              style={styles.touchableRipple}
-            >
-              <List.Item
-                title={dream.title}
-                description={dream.description}
-                left={(props) => <List.Icon {...props} icon="cloud" />}
-              />
-            </TouchableRipple>
-          </Surface>
-        </View>
-      ))}
+      <FlatList
+        data={dreams}
+        renderItem={(dreamItem) => getDreamListItem(dreamItem.item)}
+        keyExtractor={(item) => item.id.toString()}
+      />
       <FAB
         icon="plus"
         style={styles.fab}

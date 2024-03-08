@@ -1,4 +1,4 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
 import { Dream } from "../../databases/models/dream"
 import DreamService from "../../databases/services/dream.service"
@@ -37,6 +37,15 @@ export const updateDream = createAsyncThunk(
   },
 )
 
+export const filterDreams = createAsyncThunk(
+  "dreams/filter",
+  async (dreamName: string) => {
+    const dreamService = new DreamService()
+    const dreams = await dreamService.findByName(dreamName)
+    return dreams
+  },
+)
+
 interface DreamsState {
   value: Dream[]
 }
@@ -67,6 +76,9 @@ export const dreamsSlice = createSlice({
             }
           })
         }
+      })
+      .addCase(filterDreams.fulfilled, (state, action) => {
+        state.value = action.payload
       })
   },
 })

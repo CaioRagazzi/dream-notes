@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { View, StyleSheet, ScrollView } from "react-native"
+import { View, StyleSheet, FlatList } from "react-native"
 import {
   List,
   Surface,
@@ -8,8 +8,12 @@ import {
   FAB,
 } from "react-native-paper"
 
+import { Category } from "../../databases/models/category"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
-import { addInitialCategories } from "../../redux/slices/categories"
+import {
+  addInitialCategories,
+  filterCategories,
+} from "../../redux/slices/categories"
 
 export function CategoriesScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("")
@@ -24,32 +28,47 @@ export function CategoriesScreen({ navigation }) {
     navigation.navigate("SaveCategoryScreen", category)
   }
 
+  function filterCategoriesByName(categoryName: string) {
+    setSearchQuery(categoryName)
+    if (!categoryName) {
+      dispatch(addInitialCategories())
+      return
+    }
+    dispatch(filterCategories(categoryName))
+  }
+
+  function getCategoryListItem(category: Category) {
+    return (
+      <View key={category.id.toString()} style={styles.surfaceContainer}>
+        <Surface style={styles.surface}>
+          <TouchableRipple
+            onPress={() => navigateToCategoryDetail(category)}
+            rippleColor="rgba(0, 0, 0, .32)"
+            style={styles.touchableRipple}
+          >
+            <List.Item
+              title={category.name}
+              left={(props) => <List.Icon {...props} icon="cloud" />}
+            />
+          </TouchableRipple>
+        </Surface>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.mainContainer}>
       <Searchbar
         style={styles.searchBar}
         placeholder="Search"
-        onChangeText={setSearchQuery}
+        onChangeText={filterCategoriesByName}
         value={searchQuery}
       />
-      <ScrollView>
-        {categories.map((category) => (
-          <View key={category.id.toString()} style={styles.surfaceContainer}>
-            <Surface style={styles.surface}>
-              <TouchableRipple
-                onPress={() => navigateToCategoryDetail(category)}
-                rippleColor="rgba(0, 0, 0, .32)"
-                style={styles.touchableRipple}
-              >
-                <List.Item
-                  title={category.name}
-                  left={(props) => <List.Icon {...props} icon="cloud" />}
-                />
-              </TouchableRipple>
-            </Surface>
-          </View>
-        ))}
-      </ScrollView>
+      <FlatList
+        data={categories}
+        renderItem={(categoryItem) => getCategoryListItem(categoryItem.item)}
+        keyExtractor={(item) => item.id.toString()}
+      />
       <FAB
         icon="plus"
         style={styles.fab}

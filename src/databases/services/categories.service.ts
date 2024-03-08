@@ -96,4 +96,23 @@ export default class CategoryService {
       ),
     )
   }
+
+  findByName(categoryName: string) {
+    return new Promise<Category[]>((resolve, reject) =>
+      db.transaction((tx) =>
+        tx.executeSql(
+          `select * from ${table} where name like '%${categoryName}%'`,
+          [],
+          (_, result) => {
+            resolve(result.rows._array)
+          },
+          (_, error): boolean => {
+            console.warn(error)
+            reject(error)
+            return false
+          },
+        ),
+      ),
+    )
+  }
 }
