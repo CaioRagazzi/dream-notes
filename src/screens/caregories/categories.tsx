@@ -1,12 +1,6 @@
 import { useState, useEffect } from "react"
-import { View, StyleSheet, FlatList } from "react-native"
-import {
-  List,
-  Surface,
-  Searchbar,
-  TouchableRipple,
-  FAB,
-} from "react-native-paper"
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
+import { List, Surface, Searchbar, FAB } from "react-native-paper"
 
 import { Category } from "../../databases/models/category"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
@@ -39,18 +33,17 @@ export function CategoriesScreen({ navigation }) {
 
   function getCategoryListItem(category: Category) {
     return (
-      <View key={category.id.toString()} style={styles.surfaceContainer}>
+      <View key={category.id.toString()}>
         <Surface style={styles.surface}>
-          <TouchableRipple
+          <TouchableOpacity
             onPress={() => navigateToCategoryDetail(category)}
-            rippleColor="rgba(0, 0, 0, .32)"
             style={styles.touchableRipple}
           >
             <List.Item
               title={category.name}
               left={(props) => <List.Icon {...props} icon="cloud" />}
             />
-          </TouchableRipple>
+          </TouchableOpacity>
         </Surface>
       </View>
     )
@@ -91,13 +84,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  surfaceContainer: {
-    overflow: "hidden",
-  },
   surface: {
     height: 80,
     borderRadius: 20,
-    margin: 12,
+    marginHorizontal: 10,
+    marginVertical: 4,
     alignItems: "center",
     justifyContent: "center",
   },

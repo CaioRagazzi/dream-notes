@@ -1,16 +1,11 @@
 import { useState, useEffect } from "react"
-import { View, StyleSheet, FlatList } from "react-native"
-import {
-  List,
-  Surface,
-  Searchbar,
-  TouchableRipple,
-  FAB,
-} from "react-native-paper"
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
+import { List, Surface, Searchbar, FAB } from "react-native-paper"
 
 import { Dream } from "../../databases/models/dream"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
 import { addInitialDreams, filterDreams } from "../../redux/slices/dreams"
+import { supabase } from "../../api/supabase"
 
 export function DreamsScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("")
@@ -36,11 +31,10 @@ export function DreamsScreen({ navigation }) {
 
   function getDreamListItem(dream: Dream) {
     return (
-      <View key={dream.id.toString()} style={styles.surfaceContainer}>
+      <View key={dream.id.toString()}>
         <Surface style={styles.surface}>
-          <TouchableRipple
+          <TouchableOpacity
             onPress={() => navigateToDreamDetail(dream)}
-            rippleColor="rgba(0, 0, 0, .32)"
             style={styles.touchableRipple}
           >
             <List.Item
@@ -48,7 +42,7 @@ export function DreamsScreen({ navigation }) {
               description={dream.description}
               left={(props) => <List.Icon {...props} icon="cloud" />}
             />
-          </TouchableRipple>
+          </TouchableOpacity>
         </Surface>
       </View>
     )
@@ -89,13 +83,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  surfaceContainer: {
-    overflow: "hidden",
-  },
   surface: {
     height: 80,
     borderRadius: 20,
-    margin: 12,
+    marginHorizontal: 10,
+    marginVertical: 4,
     alignItems: "center",
     justifyContent: "center",
   },
