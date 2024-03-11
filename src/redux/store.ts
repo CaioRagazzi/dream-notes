@@ -3,12 +3,14 @@ import { configureStore } from "@reduxjs/toolkit"
 import categoriesReducer from "./slices/categories"
 import darkModeReducer from "./slices/darkMode"
 import dreamsReducer from "./slices/dreams"
+import userReducer from "./slices/user"
 
 export const store = configureStore({
   reducer: {
     darkMode: darkModeReducer,
     dreams: dreamsReducer,
     categories: categoriesReducer,
+    user: userReducer,
   },
 })
 
