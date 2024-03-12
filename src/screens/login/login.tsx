@@ -4,11 +4,14 @@ import { Button, Snackbar, TextInput } from "react-native-paper"
 
 import { supabase } from "../../api/supabase"
 import { User } from "../../databases/models/user"
+import { useAppDispatch } from "../../redux/reduxHooks"
+import { signIn } from "../../redux/slices/user"
 
 export default function Login() {
   const [user, setUser] = useState<User>(undefined)
   const [loading, setLoading] = useState(false)
   const [toastVisible, setToastVisible] = useState(false)
+  const dispatch = useAppDispatch()
 
   async function handleLogin() {
     setLoading(true)
@@ -23,6 +26,7 @@ export default function Login() {
         setToastVisible(false)
       }, 3000)
     } else {
+      dispatch(signIn())
     }
     setLoading(false)
   }

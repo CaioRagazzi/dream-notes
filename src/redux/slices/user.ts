@@ -1,20 +1,40 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
+import { supabase } from "../../api/supabase"
 import { User } from "../../databases/models/user"
+
+export const isUserLoggedIn = createAsyncThunk("user/isLoggedIn", async () => {
+  const session = await supabase.auth.getSession()
+
+  return session.data.session
+})
 
 const initialState: User = {
   email: "",
   id: 0,
   name: "",
   password: "",
+  isLogged: false,
 }
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    signOut: (state) => {
+      state.isLogged = false
+    },
+    signIn: (state) => {
+      state.isLogged = true
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(isUserLoggedIn.fulfilled, (state, action) => {
+      state.isLogged = !!action.payload
+    })
+  },
 })
 
-export const {} = userSlice.actions
+export const { signOut, signIn } = userSlice.actions
 
 export default userSlice.reducer

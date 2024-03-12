@@ -4,33 +4,28 @@ import IconIonicons from "@expo/vector-icons/Ionicons"
 import IconMaterialCommunity from "@expo/vector-icons/MaterialCommunityIcons"
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation"
 
 import CategoriesStack from "./categoriesStack"
 import DreamsStack from "./dreamsStack"
-import { supabase } from "../api/supabase"
+import { useAppDispatch, useAppSelector } from "../redux/reduxHooks"
+import { isUserLoggedIn } from "../redux/slices/user"
 import Login from "../screens/login/login"
 
 export default function RootNavigator() {
   const Tab = createMaterialBottomTabNavigator()
   const Stack = createNativeStackNavigator()
-  const [supabaseUser, setSupabaseUser] = useState(undefined)
+  const dispatch = useAppDispatch()
+  const isUserLogged = useAppSelector((state) => state.user.isLogged)
 
   useEffect(() => {
-    async function getUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      setSupabaseUser(user)
-    }
-    getUser()
+    dispatch(isUserLoggedIn())
   }, [])
 
   return (
     <NavigationContainer>
-      {supabaseUser ? (
+      {isUserLogged ? (
         <Tab.Navigator>
           <Tab.Screen
             options={{

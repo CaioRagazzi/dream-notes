@@ -6,12 +6,14 @@ import { Appbar } from "react-native-paper"
 import { supabase } from "../api/supabase"
 import { useAppDispatch } from "../redux/reduxHooks"
 import { toggleDarkMode } from "../redux/slices/darkMode"
+import { signOut } from "../redux/slices/user"
 
 export default function CustomNavigationBar(props: NativeStackHeaderProps) {
   const title = getHeaderTitle(props.options, props.route.name)
   const dispatch = useAppDispatch()
 
   async function handleLogout() {
+    dispatch(signOut())
     await supabase.auth.signOut()
   }
 
