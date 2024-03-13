@@ -9,11 +9,13 @@ export const isUserLoggedIn = createAsyncThunk("user/isLoggedIn", async () => {
   return session.data.session
 })
 
-const initialState: User = {
-  email: "",
-  id: 0,
-  name: "",
-  password: "",
+type InitialUserState = {
+  user: User
+  isLogged: boolean
+}
+
+const initialState: InitialUserState = {
+  user: { email: "", id: 0, name: "", password: "" },
   isLogged: false,
 }
 

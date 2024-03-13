@@ -1,4 +1,4 @@
-import { hideAsync } from "expo-splash-screen"
+import * as SplashScreen from "expo-splash-screen"
 import {
   MD3DarkTheme as DarkTheme,
   MD3LightTheme as LitgthTheme,
@@ -10,14 +10,10 @@ import { Provider } from "react-redux"
 import RootNavigator from "./src/navigation/rootNavigator"
 import { useAppSelector } from "./src/redux/reduxHooks"
 import { store } from "./src/redux/store"
-import { useEffect } from "react"
+
+SplashScreen.preventAutoHideAsync()
 
 export default function RootApp() {
-  useEffect(() => {
-    hideAsync()
-    console.log("oi")
-  }, [])
-
   return (
     <Provider store={store}>
       <App />

@@ -13,8 +13,8 @@ export default function CustomNavigationBar(props: NativeStackHeaderProps) {
   const dispatch = useAppDispatch()
 
   async function handleLogout() {
-    dispatch(signOut())
     await supabase.auth.signOut()
+    dispatch(signOut())
   }
 
   return (

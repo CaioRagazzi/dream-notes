@@ -4,23 +4,32 @@ import IconIonicons from "@expo/vector-icons/Ionicons"
 import IconMaterialCommunity from "@expo/vector-icons/MaterialCommunityIcons"
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import * as SplashScreen from "expo-splash-screen"
 import React, { useEffect } from "react"
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation"
 
 import CategoriesStack from "./categoriesStack"
 import DreamsStack from "./dreamsStack"
+import { supabase } from "../api/supabase"
 import { useAppDispatch, useAppSelector } from "../redux/reduxHooks"
-import { isUserLoggedIn } from "../redux/slices/user"
+import { signIn } from "../redux/slices/user"
 import Login from "../screens/login/login"
 
 export default function RootNavigator() {
   const Tab = createMaterialBottomTabNavigator()
   const Stack = createNativeStackNavigator()
   const dispatch = useAppDispatch()
-  const isUserLogged = useAppSelector((state) => state.user.isLogged)
+  const isUserLogged = useAppSelector((store) => store.user.isLogged)
 
   useEffect(() => {
-    dispatch(isUserLoggedIn())
+    async function get() {
+      const session = await supabase.auth.getSession()
+      if (session.data.session) {
+        dispatch(signIn())
+      }
+      await SplashScreen.hideAsync()
+    }
+    get()
   }, [])
 
   return (
