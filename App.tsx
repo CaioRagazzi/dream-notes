@@ -1,4 +1,5 @@
 import * as SplashScreen from "expo-splash-screen"
+import { useEffect } from "react"
 import {
   MD3DarkTheme as DarkTheme,
   MD3LightTheme as LitgthTheme,
@@ -7,6 +8,7 @@ import {
 import { Provider } from "react-redux"
 
 // import { Dream } from "./src/databases/schemas/dream";
+import { supabase } from "./src/api/supabase"
 import RootNavigator from "./src/navigation/rootNavigator"
 import { useAppSelector } from "./src/redux/reduxHooks"
 import { store } from "./src/redux/store"
@@ -23,6 +25,15 @@ export default function RootApp() {
 
 function App() {
   const isDarkMode = useAppSelector((state) => state.darkMode.value)
+
+  useEffect(() => {
+    async function getUser() {
+      const user = await supabase.auth.getUser()
+
+      console.log(user.data.user.id)
+    }
+    getUser()
+  }, [])
 
   const ligthTheme = {
     ...LitgthTheme,

@@ -1,17 +1,21 @@
 import React, { useState } from "react"
-import { StyleSheet, View } from "react-native"
+import { StyleSheet, View, Image } from "react-native"
 import { Button, Snackbar, TextInput } from "react-native-paper"
 
 import { supabase } from "../../api/supabase"
 import { User } from "../../databases/models/user"
 import { useAppDispatch } from "../../redux/reduxHooks"
 import { signIn } from "../../redux/slices/user"
+import { useAssets } from "expo-asset"
 
 export default function Login() {
   const [user, setUser] = useState<User>(undefined)
   const [loading, setLoading] = useState(false)
   const [toastVisible, setToastVisible] = useState(false)
   const dispatch = useAppDispatch()
+  const [assets, error] = useAssets([
+    require("../../../assets/login_robot_head.png"),
+  ])
 
   async function handleLogin() {
     setLoading(true)
@@ -33,6 +37,16 @@ export default function Login() {
 
   return (
     <View style={styles.mainContainer}>
+      <View
+        style={{
+          marginTop: 200,
+          justifyContent: "center",
+          alignItems: "center",
+          height: "70%",
+        }}
+      >
+        {assets ? <Image style={styles.tinyImage} source={assets[0]} /> : null}
+      </View>
       <TextInput
         mode="outlined"
         label="Email"
@@ -72,9 +86,13 @@ export default function Login() {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flex: 1,
+    height: "50%",
     gap: 8,
     justifyContent: "center",
     margin: 16,
+  },
+  tinyImage: {
+    width: 120,
+    height: 120,
   },
 })
