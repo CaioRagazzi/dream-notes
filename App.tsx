@@ -7,7 +7,6 @@ import {
 } from "react-native-paper"
 import { Provider } from "react-redux"
 
-// import { Dream } from "./src/databases/schemas/dream";
 import { supabase } from "./src/api/supabase"
 import RootNavigator from "./src/navigation/rootNavigator"
 import { useAppSelector } from "./src/redux/reduxHooks"

@@ -10,21 +10,22 @@ export default class DatabaseInit {
       console.log("Foreign keys turned on"),
     )
     this.InitDb()
-    // db.closeSync()
   }
   private InitDb() {
     const sql = [
-      // `DROP TABLE IF EXISTS dreams;`,
-      // `DROP TABLE IF EXISTS categories;`,
+      `DROP TABLE IF EXISTS dreams;`,
+      `DROP TABLE IF EXISTS categories;`,
       `create table if not exists categories (
         id integer primary key autoincrement,
-        name text
+        name text,
+        uploaded_at text
         );`,
       `create table if not exists dreams (
         id integer primary key autoincrement,
         title text,
         description text,
         category_id integer,
+        uploaded_at text,
         FOREIGN KEY(category_id) REFERENCES categories(id)
         );`,
     ]

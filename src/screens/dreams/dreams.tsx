@@ -5,7 +5,6 @@ import { List, Surface, Searchbar, FAB } from "react-native-paper"
 import { Dream } from "../../databases/models/dream"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
 import { addInitialDreams, filterDreams } from "../../redux/slices/dreams"
-import { supabase } from "../../api/supabase"
 
 export function DreamsScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("")

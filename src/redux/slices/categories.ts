@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
 import { Category } from "../../databases/models/category"
 import CategoryService from "../../databases/services/categories.service"
+import { supabase } from "../../api/supabase"
 
 export const addInitialCategories = createAsyncThunk(
   "categories/fetchAll",
@@ -41,6 +42,15 @@ export const filterCategories = createAsyncThunk(
     const categoryService = new CategoryService()
     const categories = await categoryService.findByName(categoryName)
     return categories
+  },
+)
+
+export const uploadCategories = createAsyncThunk(
+  "categories/upload",
+  async () => {
+    const categoryService = new CategoryService()
+    const categoriesToUpload = await categoryService.getCategoriesToUpload()
+    supabase.from("categories").upsert(categoriesToUpload)
   },
 )
 

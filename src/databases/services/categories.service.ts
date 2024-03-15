@@ -115,4 +115,23 @@ export default class CategoryService {
       ),
     )
   }
+
+  getCategoriesToUpload() {
+    return new Promise<Category[]>((resolve, reject) =>
+      db.transaction((tx) =>
+        tx.executeSql(
+          `select * from ${table} where uploaded_at is null`,
+          [],
+          (_, result) => {
+            resolve(result.rows._array)
+          },
+          (_, error): boolean => {
+            console.warn(error)
+            reject(error)
+            return false
+          },
+        ),
+      ),
+    )
+  }
 }
