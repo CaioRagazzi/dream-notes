@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
 import { List, Surface, Searchbar, FAB } from "react-native-paper"
 
-import { Dream } from "../../databases/models/dream"
+import { Dream } from "../../databases/entities/dream"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
 import { addInitialDreams, filterDreams } from "../../redux/slices/dreams"
 

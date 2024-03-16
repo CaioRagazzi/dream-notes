@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
 import { supabase } from "../../api/supabase"
-import { User } from "../../databases/models/user"
+import { User } from "../../models/user"
 
 export const isUserLoggedIn = createAsyncThunk("user/isLoggedIn", async () => {
   const session = await supabase.auth.getSession()

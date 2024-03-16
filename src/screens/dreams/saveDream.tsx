@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from "react"
 import { StyleSheet, View } from "react-native"
 import { TextInput, Button, Surface } from "react-native-paper"
 
-import { Dream } from "../../databases/models/dream"
+import { Dream } from "../../databases/entities/dream"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
 import { addInitialCategories } from "../../redux/slices/categories"
 import { addDream, updateDream } from "../../redux/slices/dreams"

@@ -1,18 +1,18 @@
 import { DatabaseConnection } from "../databaseConnection"
-import { Dream } from "../models/dream"
+import { DreamDb } from "../entities/dream"
 
 const table = "dreams"
 const db = DatabaseConnection.getConnection()
 
 export default class DreamService {
-  addData(param: Dream) {
+  addData(param: DreamDb) {
     return new Promise<number>((resolve, reject) =>
       db.transaction(
         (tx) =>
           tx.executeSql(
             `insert into ${table} (title, description, category_id) 
               values (?, ?, ?)`,
-            [param.title, param.description, param.categoryId],
+            [param.title, param.description, param.category_id],
             (_, { insertId, rows }) => {
               resolve(insertId)
             },
@@ -42,13 +42,13 @@ export default class DreamService {
     })
   }
 
-  updateById(param: Dream) {
+  updateById(param: DreamDb) {
     return new Promise<boolean>((resolve, reject) =>
       db.transaction(
         (tx) =>
           tx.executeSql(
             `update ${table} set title = ?, description = ?, category_id = ? where id = ?;`,
-            [param.title, param.description, param.categoryId, param.id],
+            [param.title, param.description, param.category_id, param.id],
             () => {
               resolve(true)
             },
@@ -61,7 +61,7 @@ export default class DreamService {
   }
 
   findById(id: number) {
-    return new Promise<Dream>((resolve, reject) =>
+    return new Promise<DreamDb>((resolve, reject) =>
       db.transaction((tx) =>
         tx.executeSql(
           `select * from ${table} where id=?`,
@@ -79,7 +79,7 @@ export default class DreamService {
   }
 
   findAll() {
-    return new Promise<Dream[]>((resolve, reject) =>
+    return new Promise<DreamDb[]>((resolve, reject) =>
       db.transaction((tx) =>
         tx.executeSql(
           `select * from ${table}`,
@@ -102,7 +102,7 @@ export default class DreamService {
   }
 
   findByName(dreamName: string) {
-    return new Promise<Dream[]>((resolve, reject) =>
+    return new Promise<DreamDb[]>((resolve, reject) =>
       db.transaction((tx) =>
         tx.executeSql(
           `select * from ${table} where title like '%${dreamName}%'`,

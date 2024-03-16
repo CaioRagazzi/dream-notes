@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import uuid from "react-native-uuid"
 
-import { Category } from "../../databases/models/category"
-import CategoryService from "../../databases/services/categories.service"
 import { supabase } from "../../api/supabase"
+import CategoryService from "../../databases/services/categories.service"
+import { Category } from "../../models/categories"
 
 export const addInitialCategories = createAsyncThunk(
   "categories/fetchAll",
@@ -17,8 +18,14 @@ export const addCategory = createAsyncThunk(
   "categories/add",
   async (category: Category) => {
     const categoryService = new CategoryService()
-    const categoryId = await categoryService.addData(category)
-    category.id = categoryId
+    category.id = uuid.v4().toString()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    category.userId = user.id
+    const categoryDb = category.convert()
+
+    await categoryService.addData(categoryDb)
     return category
   },
 )
@@ -27,7 +34,7 @@ export const updateCategory = createAsyncThunk(
   "categories/update",
   async (category: Category) => {
     const categoryService = new CategoryService()
-    const updated = await categoryService.updateById(category)
+    const updated = await categoryService.updateById(category.convert())
     if (updated) {
       return category
     } else {
@@ -50,7 +57,10 @@ export const uploadCategories = createAsyncThunk(
   async () => {
     const categoryService = new CategoryService()
     const categoriesToUpload = await categoryService.getCategoriesToUpload()
-    supabase.from("categories").upsert(categoriesToUpload)
+    const { error } = await supabase
+      .from("categories")
+      .insert(categoriesToUpload)
+    console.log(error)
   },
 )
 
@@ -69,7 +79,12 @@ export const categoriesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(addInitialCategories.fulfilled, (state, action) => {
-        state.value = action.payload
+        state.value = []
+        action.payload.map((categoryDb) => {
+          const category = new Category(categoryDb.name)
+          category.userId = categoryDb.user_id
+          action.payload.push()
+        })
       })
       .addCase(addCategory.fulfilled, (state, action) => {
         state.value.push(action.payload)
@@ -84,7 +99,12 @@ export const categoriesSlice = createSlice({
         }
       })
       .addCase(filterCategories.fulfilled, (state, action) => {
-        state.value = action.payload
+        state.value = []
+        action.payload.map((categoryDb) => {
+          const category = new Category(categoryDb.name)
+          category.userId = categoryDb.user_id
+          action.payload.push()
+        })
       })
   },
 })

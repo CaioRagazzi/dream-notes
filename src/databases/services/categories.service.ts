@@ -1,18 +1,20 @@
 import { DatabaseConnection } from "../databaseConnection"
-import { Category } from "../models/category"
+import { CategoryDb } from "../entities/category"
 
 const table = "categories"
 const db = DatabaseConnection.getConnection()
 
 export default class CategoryService {
-  addData(param: Category) {
+  addData(param: CategoryDb) {
+    console.log("service", param)
+
     return new Promise<number>((resolve, reject) =>
       db.transaction(
         (tx) =>
           tx.executeSql(
-            `insert into ${table} (name) 
-              values (?)`,
-            [param.name],
+            `insert into ${table} (id, name, user_id) 
+              values (?, ?, ?)`,
+            [param.id, param.name, param.user_id],
             (_, { insertId, rows }) => {
               resolve(insertId)
             },
@@ -42,7 +44,7 @@ export default class CategoryService {
     })
   }
 
-  updateById(param: Category) {
+  updateById(param: CategoryDb) {
     return new Promise<boolean>((resolve, reject) =>
       db.transaction(
         (tx) =>
@@ -61,7 +63,7 @@ export default class CategoryService {
   }
 
   findById(id: number) {
-    return new Promise<Category[]>((resolve, reject) =>
+    return new Promise<CategoryDb[]>((resolve, reject) =>
       db.transaction((tx) =>
         tx.executeSql(
           `select * from ${table} where id=?`,
@@ -79,7 +81,7 @@ export default class CategoryService {
   }
 
   findAll() {
-    return new Promise<Category[]>((resolve, reject) =>
+    return new Promise<CategoryDb[]>((resolve, reject) =>
       db.transaction((tx) =>
         tx.executeSql(
           `select * from ${table}`,
@@ -98,7 +100,7 @@ export default class CategoryService {
   }
 
   findByName(categoryName: string) {
-    return new Promise<Category[]>((resolve, reject) =>
+    return new Promise<CategoryDb[]>((resolve, reject) =>
       db.transaction((tx) =>
         tx.executeSql(
           `select * from ${table} where name like '%${categoryName}%'`,
@@ -117,7 +119,7 @@ export default class CategoryService {
   }
 
   getCategoriesToUpload() {
-    return new Promise<Category[]>((resolve, reject) =>
+    return new Promise<CategoryDb[]>((resolve, reject) =>
       db.transaction((tx) =>
         tx.executeSql(
           `select * from ${table} where uploaded_at is null`,

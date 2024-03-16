@@ -2,9 +2,13 @@ import { useEffect, useState } from "react"
 import { StyleSheet, View } from "react-native"
 import { TextInput, Button } from "react-native-paper"
 
-import { Category } from "../../databases/models/category"
+import { Category } from "../../models/categories"
 import { useAppDispatch } from "../../redux/reduxHooks"
-import { addCategory, updateCategory } from "../../redux/slices/categories"
+import {
+  addCategory,
+  updateCategory,
+  uploadCategories,
+} from "../../redux/slices/categories"
 
 export function SaveCategoryScreen({ route, navigation }) {
   const [category, setCategory] = useState<Category>(null)
@@ -27,8 +31,13 @@ export function SaveCategoryScreen({ route, navigation }) {
       appDispatch(updateCategory(category))
     } else {
       appDispatch(addCategory(category))
+      appDispatch(uploadCategories())
     }
     navigation.goBack()
+  }
+
+  function handleNameChange(name: string) {
+    setCategory(new Category(name))
   }
 
   return (
@@ -38,9 +47,7 @@ export function SaveCategoryScreen({ route, navigation }) {
         mode="outlined"
         label="Category Name"
         value={category?.name}
-        onChangeText={(name) =>
-          setCategory((category) => ({ ...category, name }))
-        }
+        onChangeText={handleNameChange}
       />
       <Button mode="outlined" onPress={handleSaveCategory}>
         {isEditing ? "Save" : "Add"}

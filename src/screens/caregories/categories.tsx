@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
 import { List, Surface, Searchbar, FAB } from "react-native-paper"
 
-import { Category } from "../../databases/models/category"
+import { Category } from "../../models/categories"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
 import {
   addInitialCategories,

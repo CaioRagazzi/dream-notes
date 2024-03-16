@@ -3,7 +3,7 @@ import { StyleSheet, View, Image } from "react-native"
 import { Button, Snackbar, TextInput } from "react-native-paper"
 
 import { supabase } from "../../api/supabase"
-import { User } from "../../databases/models/user"
+import { User } from "../../models/user"
 import { useAppDispatch } from "../../redux/reduxHooks"
 import { signIn } from "../../redux/slices/user"
 import { useAssets } from "expo-asset"

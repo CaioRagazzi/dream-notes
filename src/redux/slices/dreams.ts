@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
-import { Dream } from "../../databases/models/dream"
+import { Dream } from "../../databases/entities/dream"
 import DreamService from "../../databases/services/dream.service"
 
 export const addInitialDreams = createAsyncThunk(

@@ -16,12 +16,13 @@ export default class DatabaseInit {
       `DROP TABLE IF EXISTS dreams;`,
       `DROP TABLE IF EXISTS categories;`,
       `create table if not exists categories (
-        id integer primary key autoincrement,
+        id text,
         name text,
-        uploaded_at text
+        uploaded_at text,
+        user_id text
         );`,
       `create table if not exists dreams (
-        id integer primary key autoincrement,
+        id text,
         title text,
         description text,
         category_id integer,
