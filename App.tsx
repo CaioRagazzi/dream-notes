@@ -11,7 +11,6 @@ import { supabase } from "./src/api/supabase"
 import RootNavigator from "./src/navigation/rootNavigator"
 import { useAppSelector } from "./src/redux/reduxHooks"
 import { store } from "./src/redux/store"
-import DatabaseInit from "./src/databases/databaseInit"
 
 SplashScreen.preventAutoHideAsync()
 
@@ -27,7 +26,6 @@ function App() {
   const isDarkMode = useAppSelector((state) => state.darkMode.value)
 
   useEffect(() => {
-    // const init = new DatabaseInit()
     async function getUser() {
       const user = await supabase.auth.getUser()
 

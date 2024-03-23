@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
 import { List, Surface, Searchbar, FAB } from "react-native-paper"
 
-import { Category } from "../../models/categories"
+import { Category } from "../../models/category"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
 import {
   addInitialCategories,
@@ -33,7 +33,7 @@ export function CategoriesScreen({ navigation }) {
 
   function getCategoryListItem(category: Category) {
     return (
-      <View key={category.id.toString()}>
+      <View key={category.id}>
         <Surface style={styles.surface}>
           <TouchableOpacity
             onPress={() => navigateToCategoryDetail(category)}
@@ -60,7 +60,7 @@ export function CategoriesScreen({ navigation }) {
       <FlatList
         data={categories}
         renderItem={(categoryItem) => getCategoryListItem(categoryItem.item)}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
       />
       <FAB
         icon="plus"

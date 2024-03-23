@@ -3,14 +3,14 @@ import { useRef, useState, useEffect } from "react"
 import { StyleSheet, View } from "react-native"
 import { TextInput, Button, Surface } from "react-native-paper"
 
-import { Dream } from "../../databases/entities/dream"
+import { Dream } from "../../models/dream"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
 import { addInitialCategories } from "../../redux/slices/categories"
 import { addDream, updateDream } from "../../redux/slices/dreams"
 
 export function SaveDreamScreen({ route, navigation }) {
-  const [dream, setDream] = useState<Dream>(null)
-  const [selectedCategory, setSelectedCategory] = useState<number>()
+  const [dream, setDream] = useState<Dream>(undefined)
+  const [selectedCategory, setSelectedCategory] = useState<string>()
   const [isEditing, setIsEditing] = useState(false)
   const appDispatch = useAppDispatch()
   const categories = useAppSelector((state) => state.categories.value)
@@ -20,7 +20,7 @@ export function SaveDreamScreen({ route, navigation }) {
 
   useEffect(() => {
     if (categories) {
-      setSelectedCategory(dream?.categoryId ?? 0)
+      setSelectedCategory(dream?.category_id ?? "")
     }
   }, [categories, dream])
 
@@ -46,10 +46,10 @@ export function SaveDreamScreen({ route, navigation }) {
     navigation.goBack()
   }
 
-  function handleCategoryChange(categoryId: number) {
+  function handleCategoryChange(categoryId: string) {
     setDream((dream) => ({
       ...dream,
-      categoryId: categoryId === 0 ? null : categoryId,
+      categoryId: categoryId === "" ? null : categoryId,
     }))
 
     setSelectedCategory(categoryId)

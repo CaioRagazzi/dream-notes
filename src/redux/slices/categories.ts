@@ -2,30 +2,30 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import uuid from "react-native-uuid"
 
 import { supabase } from "../../api/supabase"
-import CategoryService from "../../databases/services/categories.service"
-import { Category } from "../../models/categories"
+import { Category } from "../../models/category"
 
 export const addInitialCategories = createAsyncThunk(
   "categories/fetchAll",
   async () => {
-    const categoryService = new CategoryService()
-    const categories = await categoryService.findAll()
-    return categories
+    const userData = await supabase.auth.getUser()
+    const categoryData = await supabase
+      .from("categories")
+      .select()
+      .eq("user_id", userData.data.user.id)
+
+    return categoryData.data
   },
 )
 
 export const addCategory = createAsyncThunk(
   "categories/add",
   async (category: Category) => {
-    const categoryService = new CategoryService()
+    const userData = await supabase.auth.getUser()
+    category.user_id = userData.data.user.id
     category.id = uuid.v4().toString()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    category.userId = user.id
-    const categoryDb = category.convert()
 
-    await categoryService.addData(categoryDb)
+    await supabase.from("categories").insert(category)
+
     return category
   },
 )
@@ -33,34 +33,21 @@ export const addCategory = createAsyncThunk(
 export const updateCategory = createAsyncThunk(
   "categories/update",
   async (category: Category) => {
-    const categoryService = new CategoryService()
-    const updated = await categoryService.updateById(category.convert())
-    if (updated) {
-      return category
-    } else {
-      return null
-    }
+    await supabase.from("categories").update(category).eq("id", category.id)
+
+    return category
   },
 )
 
 export const filterCategories = createAsyncThunk(
   "categories/filter",
   async (categoryName: string) => {
-    const categoryService = new CategoryService()
-    const categories = await categoryService.findByName(categoryName)
-    return categories
-  },
-)
-
-export const uploadCategories = createAsyncThunk(
-  "categories/upload",
-  async () => {
-    const categoryService = new CategoryService()
-    const categoriesToUpload = await categoryService.getCategoriesToUpload()
-    const { error } = await supabase
+    const categoryData = await supabase
       .from("categories")
-      .insert(categoriesToUpload)
-    console.log(error)
+      .select()
+      .eq("name", categoryName)
+
+    return categoryData.data
   },
 )
 
@@ -81,9 +68,13 @@ export const categoriesSlice = createSlice({
       .addCase(addInitialCategories.fulfilled, (state, action) => {
         state.value = []
         action.payload.map((categoryDb) => {
-          const category = new Category(categoryDb.name)
-          category.userId = categoryDb.user_id
-          action.payload.push()
+          const category: Category = {
+            id: categoryDb.id,
+            name: categoryDb.name,
+            user_id: categoryDb.user_id,
+            created_at: categoryDb.created_at,
+          }
+          state.value.push(category)
         })
       })
       .addCase(addCategory.fulfilled, (state, action) => {
@@ -101,9 +92,13 @@ export const categoriesSlice = createSlice({
       .addCase(filterCategories.fulfilled, (state, action) => {
         state.value = []
         action.payload.map((categoryDb) => {
-          const category = new Category(categoryDb.name)
-          category.userId = categoryDb.user_id
-          action.payload.push()
+          const category: Category = {
+            id: categoryDb.id,
+            name: categoryDb.name,
+            user_id: categoryDb.user_id,
+            created_at: categoryDb.created_at,
+          }
+          action.payload.push(category)
         })
       })
   },

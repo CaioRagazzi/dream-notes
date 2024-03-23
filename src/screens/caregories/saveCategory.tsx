@@ -2,13 +2,9 @@ import { useEffect, useState } from "react"
 import { StyleSheet, View } from "react-native"
 import { TextInput, Button } from "react-native-paper"
 
-import { Category } from "../../models/categories"
+import { Category } from "../../models/category"
 import { useAppDispatch } from "../../redux/reduxHooks"
-import {
-  addCategory,
-  updateCategory,
-  uploadCategories,
-} from "../../redux/slices/categories"
+import { addCategory, updateCategory } from "../../redux/slices/categories"
 
 export function SaveCategoryScreen({ route, navigation }) {
   const [category, setCategory] = useState<Category>(null)
@@ -31,13 +27,12 @@ export function SaveCategoryScreen({ route, navigation }) {
       appDispatch(updateCategory(category))
     } else {
       appDispatch(addCategory(category))
-      appDispatch(uploadCategories())
     }
     navigation.goBack()
   }
 
   function handleNameChange(name: string) {
-    setCategory(new Category(name))
+    setCategory((category) => ({ ...category, name }))
   }
 
   return (

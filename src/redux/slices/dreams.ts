@@ -1,48 +1,50 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import uuid from "react-native-uuid"
 
-import { Dream } from "../../databases/entities/dream"
-import DreamService from "../../databases/services/dream.service"
+import { supabase } from "../../api/supabase"
+import { Dream } from "../../models/dream"
 
 export const addInitialDreams = createAsyncThunk(
   "dreams/fetchAll",
   async () => {
-    const dreamService = new DreamService()
-    const dreams = await dreamService.findAll()
+    const userData = await supabase.auth.getUser()
+    const dreamsData = await supabase
+      .from("dreams")
+      .select()
+      .eq("user_id", userData.data.user.id)
 
-    return dreams
+    return dreamsData.data
   },
 )
 
 export const addDream = createAsyncThunk("dreams/add", async (dream: Dream) => {
-  const dreamService = new DreamService()
-  try {
-    const dreamId = await dreamService.addData(dream)
-    dream.id = dreamId
-  } catch (error) {
-    console.error(error)
-  }
+  const userData = await supabase.auth.getUser()
+  dream.user_id = userData.data.user.id
+  dream.id = uuid.v4().toString()
+
+  await supabase.from("dreams").insert(dream)
+
   return dream
 })
 
 export const updateDream = createAsyncThunk(
   "dreams/update",
   async (dream: Dream) => {
-    const dreamService = new DreamService()
-    const updated = await dreamService.updateById(dream)
-    if (updated) {
-      return dream
-    } else {
-      return null
-    }
+    await supabase.from("dreams").update(dream).eq("id", dream.id)
+
+    return dream
   },
 )
 
 export const filterDreams = createAsyncThunk(
   "dreams/filter",
   async (dreamName: string) => {
-    const dreamService = new DreamService()
-    const dreams = await dreamService.findByName(dreamName)
-    return dreams
+    const categoryData = await supabase
+      .from("dreams")
+      .select()
+      .eq("name", dreamName)
+
+    return categoryData.data
   },
 )
 
@@ -72,7 +74,7 @@ export const dreamsSlice = createSlice({
             if (dream.id === action.payload.id) {
               dream.description = action.payload.description
               dream.title = action.payload.title
-              dream.categoryId = action.payload.categoryId
+              dream.category_id = action.payload.category_id
             }
           })
         }
