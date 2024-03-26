@@ -1,15 +1,21 @@
 import { useState, useEffect } from "react"
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
-import { List, Surface, Searchbar, FAB } from "react-native-paper"
+import {
+  List,
+  Surface,
+  Searchbar,
+  FAB,
+  ActivityIndicator,
+} from "react-native-paper"
 
-import { Dream } from "../../databases/entities/dream"
+import { Dream } from "../../models/dream"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
 import { addInitialDreams, filterDreams } from "../../redux/slices/dreams"
 
 export function DreamsScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("")
   const dispatch = useAppDispatch()
-  const dreams = useAppSelector((state) => state.dreams.value)
+  const dreamsSlice = useAppSelector((state) => state.dreams)
 
   useEffect(() => {
     dispatch(addInitialDreams())
@@ -55,18 +61,27 @@ export function DreamsScreen({ navigation }) {
         onChangeText={filterDreamsByName}
         value={searchQuery}
       />
-      <FlatList
-        data={dreams}
-        renderItem={(dreamItem) => getDreamListItem(dreamItem.item)}
-        keyExtractor={(item) => item.id.toString()}
-      />
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => navigation.navigate("SaveDream")}
-        mode="elevated"
-        variant="secondary"
-      />
+      {dreamsSlice.loading ? (
+        <View style={styles.activityIndicatorContainer}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <>
+          <FlatList
+            refreshing={true}
+            data={dreamsSlice.value}
+            renderItem={(dreamItem) => getDreamListItem(dreamItem.item)}
+            keyExtractor={(item) => item.id.toString()}
+          />
+          <FAB
+            icon="plus"
+            style={styles.fab}
+            onPress={() => navigation.navigate("SaveDream")}
+            mode="elevated"
+            variant="secondary"
+          />
+        </>
+      )}
     </View>
   )
 }
@@ -74,6 +89,10 @@ export function DreamsScreen({ navigation }) {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+  },
+  activityIndicatorContainer: {
+    flex: 1,
+    justifyContent: "center",
   },
   searchBar: {
     margin: 12,

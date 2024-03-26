@@ -12,6 +12,7 @@ export const addInitialCategories = createAsyncThunk(
       .from("categories")
       .select()
       .eq("user_id", userData.data.user.id)
+      .order("created_at", { ascending: true })
 
     return categoryData.data
   },
@@ -45,7 +46,7 @@ export const filterCategories = createAsyncThunk(
     const categoryData = await supabase
       .from("categories")
       .select()
-      .eq("name", categoryName)
+      .ilike("name", `%${categoryName}%`)
 
     return categoryData.data
   },
@@ -53,10 +54,12 @@ export const filterCategories = createAsyncThunk(
 
 interface CategoriesState {
   value: Category[]
+  loading: boolean
 }
 
 const initialState: CategoriesState = {
   value: [],
+  loading: false,
 }
 
 export const categoriesSlice = createSlice({
@@ -66,16 +69,11 @@ export const categoriesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(addInitialCategories.fulfilled, (state, action) => {
-        state.value = []
-        action.payload.map((categoryDb) => {
-          const category: Category = {
-            id: categoryDb.id,
-            name: categoryDb.name,
-            user_id: categoryDb.user_id,
-            created_at: categoryDb.created_at,
-          }
-          state.value.push(category)
-        })
+        state.value = action.payload
+        state.loading = false
+      })
+      .addCase(addInitialCategories.pending, (state) => {
+        state.loading = true
       })
       .addCase(addCategory.fulfilled, (state, action) => {
         state.value.push(action.payload)
@@ -89,17 +87,12 @@ export const categoriesSlice = createSlice({
           })
         }
       })
+      .addCase(filterCategories.pending, (state, action) => {
+        state.loading = true
+      })
       .addCase(filterCategories.fulfilled, (state, action) => {
-        state.value = []
-        action.payload.map((categoryDb) => {
-          const category: Category = {
-            id: categoryDb.id,
-            name: categoryDb.name,
-            user_id: categoryDb.user_id,
-            created_at: categoryDb.created_at,
-          }
-          action.payload.push(category)
-        })
+        state.value = action.payload
+        state.loading = false
       })
   },
 })

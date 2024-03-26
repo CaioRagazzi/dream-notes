@@ -12,6 +12,7 @@ export const addInitialDreams = createAsyncThunk(
       .from("dreams")
       .select()
       .eq("user_id", userData.data.user.id)
+      .order("created_at", { ascending: true })
 
     return dreamsData.data
   },
@@ -39,21 +40,23 @@ export const updateDream = createAsyncThunk(
 export const filterDreams = createAsyncThunk(
   "dreams/filter",
   async (dreamName: string) => {
-    const categoryData = await supabase
+    const dreamData = await supabase
       .from("dreams")
       .select()
-      .eq("name", dreamName)
+      .ilike("title", `%${dreamName}%`)
 
-    return categoryData.data
+    return dreamData.data
   },
 )
 
 interface DreamsState {
   value: Dream[]
+  loading: boolean
 }
 
 const initialState: DreamsState = {
   value: [],
+  loading: false,
 }
 
 export const dreamsSlice = createSlice({
@@ -64,9 +67,17 @@ export const dreamsSlice = createSlice({
     builder
       .addCase(addInitialDreams.fulfilled, (state, action) => {
         state.value = action.payload
+        state.loading = false
+      })
+      .addCase(addInitialDreams.pending, (state) => {
+        state.loading = true
       })
       .addCase(addDream.fulfilled, (state, action) => {
         state.value.push(action.payload)
+        state.loading = false
+      })
+      .addCase(addDream.pending, (state) => {
+        state.loading = true
       })
       .addCase(updateDream.fulfilled, (state, action) => {
         if (action.payload) {
@@ -78,9 +89,14 @@ export const dreamsSlice = createSlice({
             }
           })
         }
+        state.loading = false
+      })
+      .addCase(updateDream.pending, (state) => {
+        state.loading = true
       })
       .addCase(filterDreams.fulfilled, (state, action) => {
         state.value = action.payload
+        state.loading = false
       })
   },
 })

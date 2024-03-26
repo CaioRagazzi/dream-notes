@@ -12,8 +12,8 @@ export function SaveDreamScreen({ route, navigation }) {
   const [dream, setDream] = useState<Dream>(undefined)
   const [selectedCategory, setSelectedCategory] = useState<string>()
   const [isEditing, setIsEditing] = useState(false)
-  const appDispatch = useAppDispatch()
   const categories = useAppSelector((state) => state.categories.value)
+  const isDreamLoading = useAppSelector((state) => state.dreams.loading)
   const dispatch = useAppDispatch()
 
   const pickerRef = useRef(null)
@@ -39,9 +39,9 @@ export function SaveDreamScreen({ route, navigation }) {
 
   async function handleSaveDream() {
     if (isEditing) {
-      appDispatch(updateDream(dream))
+      dispatch(updateDream(dream))
     } else {
-      appDispatch(addDream(dream))
+      dispatch(addDream(dream))
     }
     navigation.goBack()
   }
@@ -49,7 +49,7 @@ export function SaveDreamScreen({ route, navigation }) {
   function handleCategoryChange(categoryId: string) {
     setDream((dream) => ({
       ...dream,
-      categoryId: categoryId === "" ? null : categoryId,
+      category_id: categoryId === "" ? null : categoryId,
     }))
 
     setSelectedCategory(categoryId)
@@ -62,6 +62,7 @@ export function SaveDreamScreen({ route, navigation }) {
         mode="outlined"
         label="Title"
         value={dream?.title}
+        disabled={isDreamLoading}
         onChangeText={(title) => setDream((dream) => ({ ...dream, title }))}
       />
 
@@ -71,6 +72,7 @@ export function SaveDreamScreen({ route, navigation }) {
         mode="outlined"
         style={styles.textInput}
         multiline
+        disabled={isDreamLoading}
         numberOfLines={8}
         onChangeText={(description) =>
           setDream((dream) => ({ ...dream, description }))
@@ -79,6 +81,7 @@ export function SaveDreamScreen({ route, navigation }) {
       <Surface style={styles.surface}>
         <Picker
           mode="dropdown"
+          enabled={!isDreamLoading}
           ref={pickerRef}
           selectedValue={selectedCategory}
           onValueChange={(itemValue) => handleCategoryChange(itemValue)}
@@ -95,7 +98,11 @@ export function SaveDreamScreen({ route, navigation }) {
           })}
         </Picker>
       </Surface>
-      <Button mode="outlined" onPress={handleSaveDream}>
+      <Button
+        mode="outlined"
+        onPress={handleSaveDream}
+        loading={isDreamLoading}
+      >
         {isEditing ? "Save" : "Add"}
       </Button>
     </View>

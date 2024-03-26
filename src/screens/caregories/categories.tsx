@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react"
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
-import { List, Surface, Searchbar, FAB } from "react-native-paper"
+import {
+  List,
+  Surface,
+  Searchbar,
+  FAB,
+  ActivityIndicator,
+} from "react-native-paper"
 
 import { Category } from "../../models/category"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
@@ -11,7 +17,7 @@ import {
 
 export function CategoriesScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("")
-  const categories = useAppSelector((state) => state.categories.value)
+  const categoriesSlice = useAppSelector((state) => state.categories)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -57,18 +63,28 @@ export function CategoriesScreen({ navigation }) {
         onChangeText={filterCategoriesByName}
         value={searchQuery}
       />
-      <FlatList
-        data={categories}
-        renderItem={(categoryItem) => getCategoryListItem(categoryItem.item)}
-        keyExtractor={(item) => item.id}
-      />
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => navigation.navigate("SaveCategoryScreen")}
-        mode="elevated"
-        variant="secondary"
-      />
+      {categoriesSlice.loading ? (
+        <View style={styles.activityIndicatorContainer}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={categoriesSlice.value}
+            renderItem={(categoryItem) =>
+              getCategoryListItem(categoryItem.item)
+            }
+            keyExtractor={(item) => item.id}
+          />
+          <FAB
+            icon="plus"
+            style={styles.fab}
+            onPress={() => navigation.navigate("SaveCategoryScreen")}
+            mode="elevated"
+            variant="secondary"
+          />
+        </>
+      )}
     </View>
   )
 }
@@ -76,6 +92,11 @@ export function CategoriesScreen({ navigation }) {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    justifyContent: "center",
+  },
+  activityIndicatorContainer: {
+    flex: 1,
+    justifyContent: "center",
   },
   searchBar: {
     margin: 12,

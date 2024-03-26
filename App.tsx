@@ -29,7 +29,7 @@ function App() {
     async function getUser() {
       const user = await supabase.auth.getUser()
 
-      console.log(user.data.user.id)
+      console.log(user.data.user?.id)
     }
     getUser()
   }, [])
