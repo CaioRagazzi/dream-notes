@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react"
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Animated,
+  Text,
+} from "react-native"
+import Swipeable from "react-native-gesture-handler/Swipeable"
 import {
   List,
   Surface,
@@ -34,22 +42,40 @@ export function DreamsScreen({ navigation }) {
     dispatch(filterDreams(dreamName))
   }
 
+  function renderLeftActions(progress, dragAnimatedValue) {
+    return (
+      <View style={{ ...styles.surface, backgroundColor: "red" }}>
+        <Text
+          style={{
+            color: "white",
+            paddingHorizontal: 10,
+            fontWeight: "600",
+          }}
+        >
+          Delete
+        </Text>
+      </View>
+    )
+  }
+
   function getDreamListItem(dream: Dream) {
     return (
-      <View key={dream.id.toString()}>
-        <Surface style={styles.surface}>
-          <TouchableOpacity
-            onPress={() => navigateToDreamDetail(dream)}
-            style={styles.touchableRipple}
-          >
-            <List.Item
-              title={dream.title}
-              description={dream.description}
-              left={(props) => <List.Icon {...props} icon="cloud" />}
-            />
-          </TouchableOpacity>
-        </Surface>
-      </View>
+      <Swipeable renderRightActions={renderLeftActions}>
+        <View key={dream.id.toString()}>
+          <Surface style={styles.surface}>
+            <TouchableOpacity
+              onPress={() => navigateToDreamDetail(dream)}
+              style={styles.touchableRipple}
+            >
+              <List.Item
+                title={dream.title}
+                description={dream.description}
+                left={(props) => <List.Icon {...props} icon="cloud" />}
+              />
+            </TouchableOpacity>
+          </Surface>
+        </View>
+      </Swipeable>
     )
   }
 
@@ -68,7 +94,7 @@ export function DreamsScreen({ navigation }) {
       ) : (
         <>
           <FlatList
-            refreshing={true}
+            refreshing
             data={dreamsSlice.value}
             renderItem={(dreamItem) => getDreamListItem(dreamItem.item)}
             keyExtractor={(item) => item.id.toString()}
@@ -114,5 +140,32 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
+  },
+  swipedRow: {
+    flexDirection: "row",
+    flex: 1,
+    alignItems: "center",
+    paddingLeft: 5,
+    backgroundColor: "#818181",
+    margin: 20,
+    minHeight: 50,
+  },
+  swipedConfirmationContainer: {
+    flex: 1,
+  },
+  deleteConfirmationText: {
+    color: "#fcfcfc",
+    fontWeight: "bold",
+  },
+  deleteButton: {
+    backgroundColor: "#b60000",
+    flexDirection: "column",
+    justifyContent: "center",
+    height: "100%",
+  },
+  deleteButtonText: {
+    color: "#fcfcfc",
+    fontWeight: "bold",
+    padding: 3,
   },
 })

@@ -1,5 +1,6 @@
 import * as SplashScreen from "expo-splash-screen"
 import { useEffect } from "react"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
 import {
   MD3DarkTheme as DarkTheme,
   MD3LightTheme as LitgthTheme,
@@ -17,7 +18,9 @@ SplashScreen.preventAutoHideAsync()
 export default function RootApp() {
   return (
     <Provider store={store}>
-      <App />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <App />
+      </GestureHandlerRootView>
     </Provider>
   )
 }
