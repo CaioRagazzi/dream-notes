@@ -1,12 +1,6 @@
+import { AntDesign } from "@expo/vector-icons"
 import { useState, useEffect } from "react"
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Animated,
-  Text,
-} from "react-native"
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
 import Swipeable from "react-native-gesture-handler/Swipeable"
 import {
   List,
@@ -16,14 +10,22 @@ import {
   ActivityIndicator,
 } from "react-native-paper"
 
+import DeleteDialog from "../../components/dialogs/deleteDialog"
 import { Dream } from "../../models/dream"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
-import { addInitialDreams, filterDreams } from "../../redux/slices/dreams"
+import {
+  addInitialDreams,
+  deleteDream,
+  filterDreams,
+} from "../../redux/slices/dreams"
 
 export function DreamsScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
+    useState(false)
   const dispatch = useAppDispatch()
   const dreamsSlice = useAppSelector((state) => state.dreams)
+  const [dreamToDelete, setDreamToDelete] = useState<Dream>()
 
   useEffect(() => {
     dispatch(addInitialDreams())
@@ -42,29 +44,40 @@ export function DreamsScreen({ navigation }) {
     dispatch(filterDreams(dreamName))
   }
 
-  function renderLeftActions(progress, dragAnimatedValue) {
+  function renderLeftActions(dream: Dream) {
     return (
-      <View style={{ ...styles.surface, backgroundColor: "red" }}>
-        <Text
-          style={{
-            color: "white",
-            paddingHorizontal: 10,
-            fontWeight: "600",
-          }}
-        >
-          Delete
-        </Text>
-      </View>
+      <TouchableOpacity
+        onPress={() => showDeleteConfirmation(dream)}
+        style={{ ...styles.surface, backgroundColor: "red" }}
+      >
+        <AntDesign
+          style={{ padding: 20 }}
+          name="delete"
+          size={24}
+          color="white"
+        />
+      </TouchableOpacity>
     )
+  }
+
+  function showDeleteConfirmation(dream: Dream) {
+    setDeleteConfirmationVisible(true)
+    setDreamToDelete(dream)
+  }
+
+  function confirmDeleteDream() {
+    dispatch(deleteDream(dreamToDelete))
+    setDeleteConfirmationVisible(false)
   }
 
   function getDreamListItem(dream: Dream) {
     return (
-      <Swipeable renderRightActions={renderLeftActions}>
+      <Swipeable renderRightActions={() => renderLeftActions(dream)}>
         <View key={dream.id.toString()}>
           <Surface style={styles.surface}>
             <TouchableOpacity
               onPress={() => navigateToDreamDetail(dream)}
+              onLongPress={() => showDeleteConfirmation(dream)}
               style={styles.touchableRipple}
             >
               <List.Item
@@ -108,6 +121,12 @@ export function DreamsScreen({ navigation }) {
           />
         </>
       )}
+      <DeleteDialog
+        itemToDelete={dreamToDelete?.title}
+        visible={deleteConfirmationVisible}
+        confirm={() => confirmDeleteDream()}
+        cancel={() => setDeleteConfirmationVisible(false)}
+      />
     </View>
   )
 }
@@ -140,32 +159,5 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
-  },
-  swipedRow: {
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    paddingLeft: 5,
-    backgroundColor: "#818181",
-    margin: 20,
-    minHeight: 50,
-  },
-  swipedConfirmationContainer: {
-    flex: 1,
-  },
-  deleteConfirmationText: {
-    color: "#fcfcfc",
-    fontWeight: "bold",
-  },
-  deleteButton: {
-    backgroundColor: "#b60000",
-    flexDirection: "column",
-    justifyContent: "center",
-    height: "100%",
-  },
-  deleteButtonText: {
-    color: "#fcfcfc",
-    fontWeight: "bold",
-    padding: 3,
   },
 })

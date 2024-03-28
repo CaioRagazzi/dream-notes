@@ -49,6 +49,15 @@ export const filterDreams = createAsyncThunk(
   },
 )
 
+export const deleteDream = createAsyncThunk(
+  "dreams/delete",
+  async (dream: Dream) => {
+    const dreamData = await supabase.from("dreams").delete().eq("id", dream.id)
+
+    return dream.id
+  },
+)
+
 interface DreamsState {
   value: Dream[]
   loading: boolean
@@ -96,6 +105,13 @@ export const dreamsSlice = createSlice({
       })
       .addCase(filterDreams.fulfilled, (state, action) => {
         state.value = action.payload
+        state.loading = false
+      })
+      .addCase(deleteDream.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(deleteDream.fulfilled, (state, action) => {
+        state.value = state.value.filter((dream) => dream.id === action.payload)
         state.loading = false
       })
   },
