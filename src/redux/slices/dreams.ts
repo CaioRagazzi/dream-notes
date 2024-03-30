@@ -52,7 +52,7 @@ export const filterDreams = createAsyncThunk(
 export const deleteDream = createAsyncThunk(
   "dreams/delete",
   async (dream: Dream) => {
-    const dreamData = await supabase.from("dreams").delete().eq("id", dream.id)
+    await supabase.from("dreams").delete().eq("id", dream.id)
 
     return dream.id
   },

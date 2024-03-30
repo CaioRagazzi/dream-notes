@@ -52,6 +52,15 @@ export const filterCategories = createAsyncThunk(
   },
 )
 
+export const deleteCategory = createAsyncThunk(
+  "categories/delete",
+  async (category: Category) => {
+    await supabase.from("categories").delete().eq("id", category.id)
+
+    return category.id
+  },
+)
+
 interface CategoriesState {
   value: Category[]
   loading: boolean
@@ -92,6 +101,15 @@ export const categoriesSlice = createSlice({
       })
       .addCase(filterCategories.fulfilled, (state, action) => {
         state.value = action.payload
+        state.loading = false
+      })
+      .addCase(deleteCategory.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(deleteCategory.fulfilled, (state, action) => {
+        state.value = state.value.filter(
+          (category) => category.id === action.payload,
+        )
         state.loading = false
       })
   },

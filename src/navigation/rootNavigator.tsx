@@ -14,6 +14,7 @@ import { supabase } from "../api/supabase"
 import { useAppDispatch, useAppSelector } from "../redux/reduxHooks"
 import { signIn } from "../redux/slices/user"
 import Login from "../screens/login/login"
+import CreateLogin from "../screens/login/createLogin"
 
 export default function RootNavigator() {
   const Tab = createMaterialBottomTabNavigator()
@@ -68,6 +69,11 @@ export default function RootNavigator() {
           <Stack.Screen
             name="login"
             component={Login}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="createLogin"
+            component={CreateLogin}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

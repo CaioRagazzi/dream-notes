@@ -1,5 +1,7 @@
+import { AntDesign } from "@expo/vector-icons"
 import { useState, useEffect } from "react"
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native"
+import { Swipeable } from "react-native-gesture-handler"
 import {
   List,
   Surface,
@@ -8,15 +10,20 @@ import {
   ActivityIndicator,
 } from "react-native-paper"
 
+import DeleteDialog from "../../components/dialogs/deleteDialog"
 import { Category } from "../../models/category"
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHooks"
 import {
   addInitialCategories,
+  deleteCategory,
   filterCategories,
 } from "../../redux/slices/categories"
 
 export function CategoriesScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
+    useState(false)
+  const [categoryToDelete, setCategoryToDelete] = useState<Category>()
   const categoriesSlice = useAppSelector((state) => state.categories)
   const dispatch = useAppDispatch()
 
@@ -39,10 +46,11 @@ export function CategoriesScreen({ navigation }) {
 
   function getCategoryListItem(category: Category) {
     return (
-      <View key={category.id}>
+      <Swipeable renderRightActions={() => renderLeftActions(category)}>
         <Surface style={styles.surface}>
           <TouchableOpacity
             onPress={() => navigateToCategoryDetail(category)}
+            onLongPress={() => showDeleteConfirmation(category)}
             style={styles.touchableRipple}
           >
             <List.Item
@@ -51,8 +59,34 @@ export function CategoriesScreen({ navigation }) {
             />
           </TouchableOpacity>
         </Surface>
-      </View>
+      </Swipeable>
     )
+  }
+
+  function renderLeftActions(category: Category) {
+    return (
+      <TouchableOpacity
+        onPress={() => showDeleteConfirmation(category)}
+        style={{ ...styles.surface, backgroundColor: "red" }}
+      >
+        <AntDesign
+          style={{ padding: 20 }}
+          name="delete"
+          size={24}
+          color="white"
+        />
+      </TouchableOpacity>
+    )
+  }
+
+  function showDeleteConfirmation(category: Category) {
+    setDeleteConfirmationVisible(true)
+    setCategoryToDelete(category)
+  }
+
+  function confirmDeleteDream() {
+    dispatch(deleteCategory(categoryToDelete))
+    setDeleteConfirmationVisible(false)
   }
 
   return (
@@ -82,6 +116,12 @@ export function CategoriesScreen({ navigation }) {
             onPress={() => navigation.navigate("SaveCategoryScreen")}
             mode="elevated"
             variant="secondary"
+          />
+          <DeleteDialog
+            itemToDelete={categoryToDelete?.name}
+            visible={deleteConfirmationVisible}
+            confirm={() => confirmDeleteDream()}
+            cancel={() => setDeleteConfirmationVisible(false)}
           />
         </>
       )}

@@ -23,9 +23,9 @@ export function DreamsScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("")
   const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
     useState(false)
+  const [dreamToDelete, setDreamToDelete] = useState<Dream>()
   const dispatch = useAppDispatch()
   const dreamsSlice = useAppSelector((state) => state.dreams)
-  const [dreamToDelete, setDreamToDelete] = useState<Dream>()
 
   useEffect(() => {
     dispatch(addInitialDreams())
@@ -73,21 +73,19 @@ export function DreamsScreen({ navigation }) {
   function getDreamListItem(dream: Dream) {
     return (
       <Swipeable renderRightActions={() => renderLeftActions(dream)}>
-        <View key={dream.id.toString()}>
-          <Surface style={styles.surface}>
-            <TouchableOpacity
-              onPress={() => navigateToDreamDetail(dream)}
-              onLongPress={() => showDeleteConfirmation(dream)}
-              style={styles.touchableRipple}
-            >
-              <List.Item
-                title={dream.title}
-                description={dream.description}
-                left={(props) => <List.Icon {...props} icon="cloud" />}
-              />
-            </TouchableOpacity>
-          </Surface>
-        </View>
+        <Surface style={styles.surface}>
+          <TouchableOpacity
+            onPress={() => navigateToDreamDetail(dream)}
+            onLongPress={() => showDeleteConfirmation(dream)}
+            style={styles.touchableRipple}
+          >
+            <List.Item
+              title={dream.title}
+              description={dream.description}
+              left={(props) => <List.Icon {...props} icon="cloud" />}
+            />
+          </TouchableOpacity>
+        </Surface>
       </Swipeable>
     )
   }
