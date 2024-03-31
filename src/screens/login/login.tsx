@@ -1,6 +1,6 @@
 import { useAssets } from "expo-asset"
 import React, { useState } from "react"
-import { StyleSheet, View, Image, Pressable } from "react-native"
+import { StyleSheet, View, Image, Pressable, Keyboard } from "react-native"
 import { Text, Button, Snackbar, TextInput } from "react-native-paper"
 
 import { supabase } from "../../api/supabase"
@@ -13,11 +13,13 @@ export default function Login({ navigation }) {
   const [loading, setLoading] = useState(false)
   const [toastVisible, setToastVisible] = useState(false)
   const dispatch = useAppDispatch()
+  const [toastMessage, setToastMessage] = useState("Error trying to login!")
   const [assets, error] = useAssets([
     require("../../../assets/login_robot_head.png"),
   ])
 
   async function handleLogin() {
+    Keyboard.dismiss()
     setLoading(true)
     const { error } = await supabase.auth.signInWithPassword({
       email: user?.email,
@@ -25,12 +27,8 @@ export default function Login({ navigation }) {
     })
 
     if (error) {
-      console.log(error)
-
+      setToastMessage(error.message)
       setToastVisible(true)
-      setTimeout(() => {
-        setToastVisible(false)
-      }, 3000)
     } else {
       dispatch(signIn())
     }
@@ -45,44 +43,47 @@ export default function Login({ navigation }) {
     <View style={styles.mainContainer}>
       <View
         style={{
-          marginTop: 200,
-          justifyContent: "center",
           alignItems: "center",
-          height: "70%",
+          justifyContent: "center",
         }}
       >
         {assets ? <Image style={styles.tinyImage} source={assets[0]} /> : null}
       </View>
-      <TextInput
-        mode="outlined"
-        label="Email"
-        value={user?.email}
-        onChangeText={(email) => setUser((user) => ({ ...user, email }))}
-      />
-      <TextInput
-        mode="outlined"
-        label="Password"
-        value={user?.password}
-        secureTextEntry
-        onChangeText={(password) => setUser((user) => ({ ...user, password }))}
-        autoCapitalize="none"
-      />
-      <View style={styles.createLoginTextContainer}>
-        <Pressable onPress={goToCreateLogin}>
-          <Text style={styles.createLoginText}>Create an account</Text>
-        </Pressable>
+      <View style={{ gap: 8 }}>
+        <TextInput
+          mode="outlined"
+          label="Email"
+          value={user?.email}
+          onChangeText={(email) => setUser((user) => ({ ...user, email }))}
+        />
+        <TextInput
+          mode="outlined"
+          label="Password"
+          value={user?.password}
+          secureTextEntry
+          onChangeText={(password) =>
+            setUser((user) => ({ ...user, password }))
+          }
+          autoCapitalize="none"
+        />
+        <View style={styles.createLoginTextContainer}>
+          <Pressable onPress={goToCreateLogin}>
+            <Text style={styles.createLoginText}>Create an account</Text>
+          </Pressable>
+        </View>
+        <Button
+          mode="outlined"
+          onPress={handleLogin}
+          loading={loading}
+          disabled={loading}
+        >
+          <Text>Login</Text>
+        </Button>
       </View>
-      <Button
-        mode="outlined"
-        onPress={handleLogin}
-        loading={loading}
-        disabled={loading}
-      >
-        <Text>Login</Text>
-      </Button>
       <Snackbar
         visible={toastVisible}
-        onDismiss={() => {}}
+        onDismiss={() => setToastVisible(false)}
+        style={{ backgroundColor: "#A52A2A" }}
         action={{
           label: "Close",
           onPress: () => {
@@ -90,7 +91,7 @@ export default function Login({ navigation }) {
           },
         }}
       >
-        Error trying to login!
+        {toastMessage}
       </Snackbar>
     </View>
   )
@@ -98,8 +99,8 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   mainContainer: {
+    flex: 1,
     height: "50%",
-    gap: 8,
     justifyContent: "center",
     margin: 16,
   },

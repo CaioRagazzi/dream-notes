@@ -1,29 +1,28 @@
-import { useAssets } from "expo-asset"
 import React, { useState } from "react"
-import { StyleSheet, View, Image, Pressable } from "react-native"
+import { StyleSheet, View, Keyboard } from "react-native"
 import { Text, Button, Snackbar, TextInput } from "react-native-paper"
 
 import { supabase } from "../../api/supabase"
 import { User } from "../../models/user"
-import { useAppDispatch } from "../../redux/reduxHooks"
-import { signIn } from "../../redux/slices/user"
 
 export default function CreateLogin({ navigation }) {
   const [user, setUser] = useState<User>(undefined)
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [toastVisible, setToastVisible] = useState(false)
-  const dispatch = useAppDispatch()
-  const [errorMessage, setErrorMessage] = useState("")
+  const [toastMessage, setToastMessage] = useState("")
+  const [toastColor, setToastColor] = useState("#A52A2A")
 
   async function handleCreateLogin() {
+    setToastColor("#A52A2A")
+    Keyboard.dismiss()
     if (!user || !user.email || !user.password) {
-      setErrorMessage("Please fill all required fields")
+      setToastMessage("Please fill all required fields")
       setToastVisible(true)
       return
     }
     if (user.password !== confirmPassword) {
-      setErrorMessage("Password and Confirmation password must be equal")
+      setToastMessage("Password and Confirmation password must be equal")
       setToastVisible(true)
       return
     }
@@ -33,17 +32,16 @@ export default function CreateLogin({ navigation }) {
       password: user?.password,
       options: {},
     })
-
     if (error) {
-      console.log(error)
-
-      setErrorMessage("Error Creating Login")
-
+      setToastColor("#A52A2A")
+      setToastMessage(error.message)
       setToastVisible(true)
-      setTimeout(() => {
-        setToastVisible(false)
-      }, 3000)
     } else {
+      setToastColor("#98FB98")
+      setToastMessage(
+        "An email was sent to you, please confirm it before accessing!",
+      )
+      setToastVisible(true)
       navigation.goBack()
     }
     setLoading(false)
@@ -92,7 +90,8 @@ export default function CreateLogin({ navigation }) {
       </Button>
       <Snackbar
         visible={toastVisible}
-        onDismiss={() => {}}
+        style={{ backgroundColor: toastColor }}
+        onDismiss={() => setToastVisible(false)}
         action={{
           label: "Close",
           onPress: () => {
@@ -100,7 +99,7 @@ export default function CreateLogin({ navigation }) {
           },
         }}
       >
-        {errorMessage}
+        {toastMessage}
       </Snackbar>
     </View>
   )
